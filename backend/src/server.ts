@@ -1,11 +1,12 @@
-import 'dotenv/config';
 import express from 'express';
+import { connectDB } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { connectDB } from './config/db';
 import { authRouter } from './routes/auth';
 import { loanRouter } from './routes/loans';
+import { scenarioRouter } from './routes/scenarios';
+import { refinancingRouter } from './routes/refinancing';
 import { repaymentRouter } from './routes/repayment';
 
 const app = express();
@@ -18,7 +19,10 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' 
 app.use('/api/v1', authRouter);
 app.use('/api/v1', loanRouter);
 app.use('/api', loanRouter);
-app.use('/api', authRouter);
+app.use('/api/v1', scenarioRouter);
+app.use('/api/v1', refinancingRouter);
+app.use('/api', scenarioRouter);
+app.use('/api', refinancingRouter);
 app.use('/api', repaymentRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
