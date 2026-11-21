@@ -3,7 +3,7 @@ import { connectDB } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { authRouter } from './routes/auth';
+import { adminRouter } from './routes/admin';
 import { loanRouter } from './routes/loans';
 import { scenarioRouter } from './routes/scenarios';
 import { refinancingRouter } from './routes/refinancing';
@@ -16,7 +16,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
-app.use('/api/v1', authRouter);
+app.use('/api/v1', adminRouter);
+app.use('/api', adminRouter);
 app.use('/api/v1', loanRouter);
 app.use('/api', loanRouter);
 app.use('/api/v1', scenarioRouter);
