@@ -33,6 +33,17 @@ router.put('/loans/:id', authMiddleware, async (req, res) => {
   res.json({ loan });
 });
 
+router.post('/loans/import', authMiddleware, async (req, res) => {
+  const items = z.array(loanSchema).safeParse(req.body?.loans);
+  if (!items.success) return res.status(422).json({ error: 'Validation failed', details: items.error.flatten() });
+  const created = [];
+  for (const l of items.data) {
+    const exists = await Loan.findOne({ userId: (req as any).user.id, name: l.name, balance: l.balance });
+    if (exists) continue;
+    created.push(await Loan.create({ ...l, userId: (req as any).user.id }));
+  }
+  res.status(201).json({ imported: created.length, loans: created });
+});
 router.delete('/loans/:id', authMiddleware, async (req, res) => {
   const loan = await Loan.findOneAndDelete({ _id: req.params.id, userId: (req as any).user.id });
   if (!loan) return res.status(404).json({ error: 'Not found' });
