@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './config/db';
 import { authRouter } from './routes/auth';
+import { loanRouter } from './routes/loans';
 import { repaymentRouter } from './routes/repayment';
 
 const app = express();
@@ -15,7 +16,8 @@ app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
 app.use('/api/v1', authRouter);
-app.use('/api/v1', repaymentRouter);
+app.use('/api/v1', loanRouter);
+app.use('/api', loanRouter);
 app.use('/api', authRouter);
 app.use('/api', repaymentRouter);
 
