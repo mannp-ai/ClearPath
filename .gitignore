@@ -1,0 +1,59 @@
+# Node & Build artifacts
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.next/
+coverage/
+playwright-report/
+test-results/
+*.local
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Caches
+.pytest_cache/
+.coverage
+htmlcov/
+# Local environment and secret files; keep safe example templates
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Local agent tooling
+.agents/
+skills-lock.json
