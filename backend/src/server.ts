@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './config/db';
+import { authRouter } from './routes/auth';
 import { repaymentRouter } from './routes/repayment';
 
 const app = express();
@@ -13,7 +14,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
+app.use('/api/v1', authRouter);
 app.use('/api/v1', repaymentRouter);
+app.use('/api', authRouter);
 app.use('/api', repaymentRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
