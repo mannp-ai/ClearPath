@@ -6,6 +6,7 @@ export async function connectDB(uri: string): Promise<void> {
     console.log('MongoDB connected');
   } catch (err) {
     console.error('MongoDB connection failed', err);
-    process.exit(1);
+    if (process.env.NODE_ENV !== 'test') process.exit(1);
+    throw err;
   }
 }
