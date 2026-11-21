@@ -3,6 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { connectDB } from './config/db';
 import { repaymentRouter } from './routes/repayment';
 
 const app = express();
@@ -21,5 +22,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 const port = Number(process.env.PORT || 4000);
-app.listen(port, () => console.log(`ClearPath backend on ${port}`));
+connectDB(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/clearpath').then(() => {
+  app.listen(port, () => console.log(`ClearPath backend on ${port}`));
+});
 export default app;
