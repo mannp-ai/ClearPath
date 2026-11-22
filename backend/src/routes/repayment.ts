@@ -2,6 +2,9 @@ import Decimal from 'decimal.js';
 import { Router } from 'express';
 import { z } from 'zod';
 import { compareStrategies } from '../services/finance/repayment';
+import { authMiddleware } from '../middleware/auth';
+import { LoanType } from '../types/finance';
+import { serializeDecimalValues } from '../utils/serialize';
 
 const router = Router();
 
@@ -11,7 +14,7 @@ const loanSchema = z.object({
   balance: z.number().positive().max(10000000),
   interest_rate: z.number().min(0).max(100),
   minimum_payment: z.number().positive().max(1000000),
-  loan_type: z.string().optional(),
+  loan_type: z.enum(['Federal', 'Private', 'Unknown']).optional(),
 });
 
 const compareSchema = z.object({
@@ -19,23 +22,22 @@ const compareSchema = z.object({
   extra_monthly_payment: z.number().min(0).max(100000).optional(),
 });
 
-router.post('/repayment/compare', (req, res) => {
+router.post('/repayment/compare', authMiddleware, (req, res) => {
   const parsed = compareSchema.safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ error: 'Validation failed', details: parsed.error.flatten() });
   const { loans, extra_monthly_payment } = parsed.data;
-  const result = compareStrategies(loans as any, new Decimal(extra_monthly_payment ?? 0));
-  // serialize decimals
-  const serialize = (o: any): any => {
-    if (o && typeof o === 'object') {
-      if (o instanceof (require('decimal.js').default)) return o.toString();
-      if (Array.isArray(o)) return o.map(serialize);
-      const out: any = {};
-      for (const k of Object.keys(o)) out[k] = serialize(o[k]);
-      return out;
-    }
-    return o;
-  };
-  res.json(serialize(result));
+  const financeLoans = loans.map((loan) => ({
+    ...loan,
+    loan_type: loan.loan_type === 'Federal'
+      ? LoanType.FEDERAL
+      : loan.loan_type === 'Private'
+        ? LoanType.PRIVATE
+        : loan.loan_type === 'Unknown'
+          ? LoanType.UNKNOWN
+          : undefined,
+  }));
+  const result = compareStrategies(financeLoans, new Decimal(extra_monthly_payment ?? 0));
+  res.json(serializeDecimalValues(result));
 });
 
 export const repaymentRouter = router;

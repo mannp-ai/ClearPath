@@ -90,7 +90,7 @@ export function calculateRefinance(loans: LoanInput[], input: { proposed_interes
   } else {
     breakEvenExplanation = 'Fees are financed into the loan balance and amortized over the full term.';
   }
-  const hasFederal = input.has_federal_loans || loans.some(l => l.loan_type === 'Federal' || (l as any).type === 'Federal');
+  const hasFederal = input.has_federal_loans || loans.some((loan) => loan.loan_type === 'Federal');
   const federalWarning = hasFederal ? 'Caution: You have eligible federal student loans. Refinancing federal loans into a private loan permanently forfeits federal protections, including Income-Driven Repayment (IDR/SAVE), Public Service Loan Forgiveness (PSLF), federal forbearance/deferment, and death/disability discharge.' : null;
 
   return {

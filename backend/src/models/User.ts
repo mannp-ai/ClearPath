@@ -1,25 +1,35 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type Role = 'USER' | 'ADMIN' | 'SUPER_ADMIN';
+export type AuthProvider = 'local' | 'google';
 
 export interface IUser extends Document {
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
+  googleId?: string;
+  authProvider: AuthProvider;
   role: Role;
   status: 'active' | 'deactivated';
   emailVerified: boolean;
-  profile: { name?: string };
+  sessionVersion: number;
+  profile: { name?: string; picture?: string };
   createdAt: Date;
   updatedAt: Date;
 }
 
 const UserSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  passwordHash: { type: String, required: true },
+  passwordHash: { type: String, required: false },
+  googleId: { type: String, sparse: true, unique: true },
+  authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
   role: { type: String, enum: ['USER', 'ADMIN', 'SUPER_ADMIN'], default: 'USER' },
   status: { type: String, enum: ['active', 'deactivated'], default: 'active' },
   emailVerified: { type: Boolean, default: false },
-  profile: { name: String },
+  sessionVersion: { type: Number, default: 0 },
+  profile: {
+    name: { type: String, trim: true },
+    picture: { type: String, trim: true },
+  },
 }, { timestamps: true });
 
 export const User = mongoose.model<IUser>('User', UserSchema);

@@ -14,6 +14,7 @@ function tokenModel(name: string) {
     expiresAt: { type: Date, required: true },
     used: { type: Boolean, default: false },
   }, { timestamps: true });
+  s.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
   return mongoose.model<IToken>(name, s);
 }
 

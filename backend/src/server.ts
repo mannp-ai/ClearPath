@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
-import { connectDB } from './config/db';
+import { connectDB, ensureIndexes } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { authRouter } from './routes/auth';
 import { adminRouter } from './routes/admin';
 import { loanRouter } from './routes/loans';
 import { scenarioRouter } from './routes/scenarios';
@@ -11,30 +13,77 @@ import { repaymentRouter } from './routes/repayment';
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: (process.env.CORS_ORIGINS || 'http://localhost:3000').split(','), credentials: true }));
-app.use(express.json());
+
+const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow server-to-server or requests without Origin header (e.g. mobile/curl)
+    if (!origin) return callback(null, true);
+    if (corsOrigins.includes(origin) || corsOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    // Allow preview deployments if configured
+    if (process.env.ALLOW_VERCEL_PREVIEWS === 'true' && origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+}));
+
+app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
+// Serverless DB connection middleware (ensures warm or cold connection in Vercel serverless)
+app.use(async (_req, _res, next) => {
+  if (process.env.NODE_ENV !== 'test' && process.env.MONGODB_URI) {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('Failed to establish database connection in request middleware', err);
+    }
+  }
+  next();
+});
+
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
+app.use('/api/v1', authRouter);
+app.use('/api', authRouter);
 app.use('/api/v1', adminRouter);
 app.use('/api', adminRouter);
 app.use('/api/v1', loanRouter);
 app.use('/api', loanRouter);
 app.use('/api/v1', scenarioRouter);
 app.use('/api/v1', refinancingRouter);
+app.use('/api/v1', repaymentRouter);
 app.use('/api', scenarioRouter);
 app.use('/api', refinancingRouter);
 app.use('/api', repaymentRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err?.message?.includes('CORS')) {
+    return res.status(403).json({ error: err.message });
+  }
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
 const port = Number(process.env.PORT || 4000);
 if (require.main === module) {
-  connectDB(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/clearpath').then(() => {
+  if (!process.env.JWT_ACCESS_SECRET || process.env.JWT_ACCESS_SECRET.length < 32) {
+    throw new Error('JWT_ACCESS_SECRET must be configured with at least 32 characters');
+  }
+  if (!process.env.CORS_ORIGINS && process.env.NODE_ENV === 'production') {
+    throw new Error('CORS_ORIGINS must be configured in production');
+  }
+  connectDB().then(async () => {
+    await ensureIndexes();
     app.listen(port, () => console.log(`ClearPath backend on ${port}`));
   });
 }
+
 export default app;

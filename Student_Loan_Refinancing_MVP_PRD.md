@@ -2,6 +2,8 @@
 
 ## Student Loan Refinancing & Accelerated Payoff Planner
 
+> **Current project baseline:** This original MVP brief is retained as historical product context. The expanded, current 40-page project requirements baseline is [CLEARPATH_PROJECT_PRD_40_PAGE.md](./CLEARPATH_PROJECT_PRD_40_PAGE.md). Where migration scope or current status differs, use the expanded PRD and its dated evidence.
+
   Field            Value
   ---------------- ---------------------------------------
   Version          1.0

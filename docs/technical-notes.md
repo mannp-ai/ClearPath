@@ -1,70 +1,39 @@
 # Technical Architecture & Engineering Notes
 
-## 1. System Architecture
+## Architecture
 
 ```text
-┌────────────────────────────────────────────────────────┐
-│                   React + Vite SPA                     │
-│  - Tailwind CSS Fintech Design System                  │
-│  - Recharts Balance-Over-Time Interactive Graphs       │
-│  - LocalStorage Zero-Setup Persistence                 │
-│  - Resilient Client-Side Engine Fallback               │
-└───────────────────────────┬────────────────────────────┘
-                            │
-               HTTP JSON API│ (Optional / Primary)
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│                   FastAPI Backend                      │
-│  - Pydantic v2 Input Validation & Strict Typing        │
-│  - Python `decimal.Decimal` Financial Calculations     │
-│  - Zero Binary Floating-Point Drift                    │
-│  - CORS Middleware Configured                          │
-└────────────────────────────────────────────────────────┘
+Browser
+  └─ Next.js App Router (frontend/)
+       └─ credentialed JSON requests
+            └─ Express API (backend/, port 4000)
+                 ├─ auth, admin, loans, scenarios, repayment, refinance routes
+                 ├─ request validation and authorization middleware
+                 └─ Mongoose models → MongoDB
+
+Python/FastAPI backend/ and frontend-legacy/ are preserved migration references.
 ```
 
----
+The Next.js client sends HTTP-only cookies to Express (`withCredentials`). The API is configured through `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:4000`). Express mounts versioned routes under `/api/v1`; the health endpoint is `/api/health`.
 
-## 2. Dual-Engine Resilience
+## Data and authorization boundaries
 
-To provide an optimal user experience that meets both requirements:
-1. **Zero-Latency Interactions:** When users adjust monthly extra payment sliders, the client-side mirror provides instant, reactive chart and metric updates without waiting on network roundtrips.
-2. **Deterministic Backend API:** The application integrates with a standalone Python FastAPI backend (`/api/calculate/compare`, `/api/calculate/refinance`, `/api/health`). The backend is the decimal-safe calculation authority. A client-side fallback keeps the calculator usable when the API is unavailable, but should be covered by explicit parity tests before a production claim of identical outputs.
+- Users own loans and repayment scenarios through `userId` references.
+- Loan/scenario read, update, and delete queries are scoped by the authenticated user ID.
+- Admin routes check current account role/status; role changes require `SUPER_ADMIN`.
+- Access JWTs are short-lived and session-version checked. Opaque refresh tokens are stored hashed and rotated; cookie settings are HTTP-only and SameSite=Lax.
+- Route tests verify these contracts with mocked models. Real MongoDB behavior and indexes have not yet been integration-tested.
 
----
+## Financial engine and persistence
 
-## 3. Financial Precision & Decimal Safety
+Repayment and refinancing are calculated in TypeScript with `decimal.js`. The Python implementation remains the reference until broad parity and end-to-end gates pass. Current parity evidence is one fixed dataset, compared over complete monthly schedules and refinance summaries; see the [financial regression report](../CLEARPATH_FINANCIAL_REGRESSION_REPORT.md).
 
-Standard JavaScript and Python floating-point operations suffer from representation errors (e.g., `0.1 + 0.2 === 0.30000000000000004`).
-In this application:
-- Python backend uses `from decimal import Decimal, ROUND_HALF_UP` throughout all monetary operations.
-- All monthly interest, principal payments, and closing balances are quantized to cents (`Decimal('0.01')`) per servicing industry conventions.
-- Zero-interest loans (0.00%) avoid division by zero through dedicated branching.
-- Amortization payments use:
-  $$\text{Payment} = P \times \frac{r}{1 - (1 + r)^{-n}}$$
-  with zero-rate fallback $\frac{P}{n}$.
+MongoDB models exist for users, loans, scenarios, sessions/tokens. No SQL source schema or database is present in the workspace; no SQL migration has run. Browser-local portfolio import is a separate path and is not SQL migration.
 
----
+## Runtime configuration
 
-## 4. Test Coverage Summary
-The test suite in `backend/tests/` currently contains 33 pytest cases covering:
-- Single loan zero-interest payoff duration and zero interest total.
-- Single loan positive-interest amortization schedule.
-- Non-amortizing loan detection when minimum payment $\le$ monthly interest.
-- Payment capping at remaining balance (no overpayments).
-- Debt Avalanche priority vs Debt Snowball priority under identical budgets.
-- Stable tie-breaking rules:
-  - Avalanche equal rates: smaller balance first.
-  - Snowball equal balances: higher interest rate first.
-  - Tie-break 2: stable creation order.
-- Mid-period loan payoff and intra-month payment rollover cascading.
-- Extra payments exceeding total remaining portfolio debt.
-- Refinancing with 0% interest.
-- Refinancing with upfront fees vs fees financed into principal.
-- Small refinance balances, rounded final payments, and non-negative total interest.
-- Refusing to report a current lifetime cost when the minimum-payment baseline is not amortizing.
-- API rejection of duplicate loan identifiers.
-- Term elongation analysis (demonstrating lower monthly payment with higher total lifetime interest).
-- Automatic generation of federal student loan forfeiture warnings.
-- FastAPI REST endpoint integration and health checks.
+Configure MongoDB, a 32-character-or-longer `JWT_ACCESS_SECRET`, production CORS/frontend origins, and SMTP settings for verification/reset messages. Do not use production credentials or data for test runs. See [setup guide](../CLEARPATH_SETUP_GUIDE.md).
 
-All 18 unit and integration tests pass cleanly in under 3 seconds.
+## Release controls
+
+Keep the Python backend and original data until real MongoDB persistence, email, authorization, browser journeys, dependency review, and rollback have been verified. Current blockers are tracked in the [release checklist](../CLEARPATH_RELEASE_READINESS.md).
