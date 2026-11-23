@@ -24,6 +24,8 @@ import {
 } from '../services/googleAuth';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
+import { isIsoCurrency } from '../utils/currency';
+import { requireUrl } from '../config/urls';
 
 const router = Router();
 const ACCESS_TOKEN_MS = 15 * 60 * 1000;
@@ -57,6 +59,7 @@ export function getCookieOptions(maxAge: number) {
     secure,
     sameSite,
     path: '/',
+    domain: process.env.COOKIE_DOMAIN || undefined,
     maxAge,
   };
 }
@@ -173,7 +176,7 @@ router.post('/auth/login', authLimiter, asyncHandler(async (req, res) => {
 // ==========================================
 
 router.get('/auth/google', authLimiter, (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendUrl = requireUrl('FRONTEND_URL', 'http://localhost:3000');
   if (!process.env.GOOGLE_CLIENT_ID) {
     return res.redirect(`${frontendUrl}/login?error=google_not_configured`);
   }
@@ -187,7 +190,7 @@ router.get('/auth/google', authLimiter, (req, res) => {
 });
 
 router.get('/auth/google/callback', authLimiter, asyncHandler(async (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendUrl = requireUrl('FRONTEND_URL', 'http://localhost:3000');
 
   // 1. Handle user cancellation or error from Google
   if (req.query.error) {
@@ -374,6 +377,21 @@ router.post('/auth/password-reset/confirm', authLimiter, asyncHandler(async (req
   }
 
   return res.json({ message: 'Password updated. Sign in with your new password.' });
+}));
+
+router.patch('/auth/preferences', authMiddleware, asyncHandler(async (req, res) => {
+  const parsed = z.object({
+    country: z.string().toUpperCase().regex(/^[A-Z]{2}$/).optional(),
+    currency: z.string().toUpperCase().refine(isIsoCurrency, 'Unsupported currency').optional(),
+  }).refine((v) => v.country || v.currency).safeParse(req.body);
+  if (!parsed.success) return res.status(422).json({ error: 'Validation failed' });
+  const set: Record<string, string> = {};
+  if (parsed.data.country) set['preferences.country'] = parsed.data.country;
+  if (parsed.data.currency) set['preferences.currency'] = parsed.data.currency;
+  const user = await User.findByIdAndUpdate(req.user!.id, { $set: set }, { new: true })
+    .select('-passwordHash -sessionVersion');
+  if (!user) return res.status(404).json({ error: 'Not found' });
+  return res.json({ user });
 }));
 
 router.get('/auth/me', authMiddleware, asyncHandler(async (req, res) => {

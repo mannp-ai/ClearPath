@@ -3,124 +3,46 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   return (
-    <main className="flex-1 bg-[#f8fafc]">
+    <main className="flex-1 bg-[#f6f1e7]">
       {/* 1. Hero Section */}
-      <section className="border-b border-[#e2e8f0] bg-white pt-14 pb-16 sm:pt-20 sm:pb-24">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <section className="relative overflow-hidden border-b border-[#e4dccb] bg-[#f6f1e7] pt-16 pb-20 sm:pt-24 sm:pb-28">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-[#f4b942] opacity-40" />
+        <div aria-hidden="true" className="pointer-events-none absolute -left-16 bottom-8 h-32 w-32 rounded-full bg-[#e8553d] opacity-20" />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Column: Value Prop */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#bfdbfe] bg-[#eff6ff] px-3 py-1 text-xs font-medium text-[#1d4ed8]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2563eb]" />
-                <span>Deterministic debt modeling</span>
-              </div>
-
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight text-[#0f172a] leading-[1.1]">
-                Take control of your student loans.
-              </h1>
-
-              <p className="text-base sm:text-lg text-[#475569] leading-relaxed max-w-xl">
-                Understand your debt, compare repayment strategies, and explore refinancing scenarios — all in one place.
+            <div className="lg:col-span-7 space-y-6 animate-fade-up">
+              <p className="text-sm font-medium uppercase tracking-widest text-[#14594a]">
+                Student loan decision support
               </p>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                <Link
-                  href="/register"
-                  className="cp-btn-primary text-sm px-6 py-3"
-                >
+              <h1 className="font-head text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-[-0.04em] text-[#231f1b]">
+                Take control of your <span className="box-decoration-clone rounded-xl bg-[#f4b942] px-2">student loans.</span>
+              </h1>
+              <p className="text-lg text-[#4a4239] leading-relaxed max-w-xl">
+                Understand your debt, compare repayment strategies, and explore refinancing scenarios, all in one place.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <Link href="/register" className="cp-btn-primary px-6">
                   <span>Start managing loans</span>
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
-                <a
-                  href="#features"
-                  className="cp-btn-secondary text-sm px-6 py-3"
-                >
+                <a href="#features" className="cp-btn-secondary px-6">
                   Explore features
                 </a>
               </div>
-
-              {/* Institutional Assurances */}
-              <div className="pt-4 border-t border-[#f1f5f9] grid grid-cols-3 gap-4 text-xs text-[#64748b]">
-                <div>
-                  <strong className="block font-semibold text-[#0f172a]">$0 Fee</strong>
-                  <span>Free educational tool</span>
-                </div>
-                <div>
-                  <strong className="block font-semibold text-[#0f172a]">Zero Bias</strong>
-                  <span>No lender commissions</span>
-                </div>
-                <div>
-                  <strong className="block font-semibold text-[#0f172a]">Exact Math</strong>
-                  <span>Actuarial amortization</span>
-                </div>
-              </div>
             </div>
 
-            {/* Right Column: Grounded Financial Comparison Preview */}
-            <div className="lg:col-span-6">
-              <div className="rounded-xl border border-[#cbd5e1] bg-white shadow-sm overflow-hidden">
-                {/* Header Strip */}
-                <div className="border-b border-[#e2e8f0] bg-[#f8fafc] px-5 py-3.5 flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-semibold text-[#0f172a]">Illustrative Portfolio Model</span>
-                    <p className="text-[11px] text-[#64748b]">4 student loans totaling $48,500.00 at 5.85% APR</p>
-                  </div>
-                  <span className="rounded-md border border-[#cbd5e1] bg-white px-2 py-0.5 text-[11px] font-mono text-[#475569]">
-                    Sample data
-                  </span>
-                </div>
-
-                {/* Strategy Comparison Matrix */}
-                <div className="p-5 space-y-4">
-                  {/* Baseline Row */}
-                  <div className="rounded-lg border border-[#e2e8f0] p-4 bg-[#f8fafc] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-semibold text-[#475569]">Minimum Payments (Baseline)</div>
-                      <div className="text-xs text-[#64748b] mt-0.5">$540/month required minimums</div>
-                    </div>
-                    <div className="text-right sm:text-right">
-                      <div className="font-mono text-sm font-semibold text-[#0f172a] tabular-nums">120 months</div>
-                      <div className="text-[11px] text-[#64748b] tabular-nums">$15,480 lifetime interest</div>
-                    </div>
-                  </div>
-
-                  {/* Avalanche Row (Hero Strategy) */}
-                  <div className="rounded-lg border-2 border-[#2563eb] p-4 bg-[#eff6ff]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#1d4ed8]">Debt Avalanche (+ $150/mo extra)</span>
-                        <span className="rounded-full bg-[#dcfce7] px-2 py-0.5 text-[10px] font-semibold text-[#15803d]">
-                          Saves most money
-                        </span>
-                      </div>
-                      <div className="text-xs text-[#475569] mt-0.5">Focus extra funds on highest APR first</div>
-                    </div>
-                    <div className="text-right sm:text-right">
-                      <div className="font-mono text-sm font-semibold text-[#15803d] tabular-nums">78 months (-3.5 yrs)</div>
-                      <div className="text-[11px] font-semibold text-[#15803d] tabular-nums">Saves $4,320 in interest</div>
-                    </div>
-                  </div>
-
-                  {/* Snowball Row */}
-                  <div className="rounded-lg border border-[#e2e8f0] p-4 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-semibold text-[#475569]">Debt Snowball (+ $150/mo extra)</div>
-                      <div className="text-xs text-[#64748b] mt-0.5">Eliminate smallest balance first for early wins</div>
-                    </div>
-                    <div className="text-right sm:text-right">
-                      <div className="font-mono text-sm font-semibold text-[#0f172a] tabular-nums">82 months</div>
-                      <div className="text-[11px] text-[#475569] tabular-nums">Saves $3,640 in interest</div>
-                    </div>
-                  </div>
-
-                  {/* Summary Footer */}
-                  <div className="pt-2 flex items-center justify-between text-xs text-[#64748b] border-t border-[#f1f5f9]">
-                    <span>Rollover cascading automatically modeled</span>
-                    <Link href="/register" className="font-medium text-[#2563eb] hover:underline">
-                      Model your loans →
-                    </Link>
-                  </div>
-                </div>
+            {/* What the tools produce: descriptive only, no sample figures */}
+            <div className="lg:col-span-5 animate-fade-up animation-delay-150">
+              <div className="rounded-2xl bg-[#12332b] p-6 sm:p-8 space-y-5">
+                <h2 className="text-sm font-semibold uppercase tracking-widest text-[#f4b942]">Your results show</h2>
+                <ul className="space-y-4 text-base text-[#e4dccb]">
+                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Months to debt-free under minimum payments, Avalanche and Snowball</span></li>
+                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Total interest paid, and what extra payments save</span></li>
+                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Refinancing cost versus keeping your current loans, with federal-protection warnings</span></li>
+                </ul>
+                <p className="text-sm text-[#d6ccb8] border-t border-[#2d5a4e] pt-4">
+                  Calculated from the loans you enter. No bank linking, no credit check, no lender commissions.
+                </p>
               </div>
             </div>
           </div>
@@ -128,13 +50,13 @@ export default function Home() {
       </section>
 
       {/* 2. Features Section (High-Density Analytical Showcase) */}
-      <section id="features" className="py-20 bg-[#f8fafc] border-b border-[#e2e8f0]">
+      <section id="features" className="py-20 bg-[#f6f1e7] border-b border-[#e4dccb]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="max-w-2xl mb-12">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0f172a]">
+            <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
               Built for precision, not sales pitches.
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-[#64748b]">
+            <p className="mt-2 text-sm sm:text-base text-[#62594e]">
               Every tool in ClearPath solves a real friction point in student loan management.
             </p>
           </div>
@@ -142,61 +64,61 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Feature 1 */}
             <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#2563eb]">01</span>
-              <h3 className="font-display text-lg font-bold text-[#0f172a]">
+              <span className="font-mono text-xs font-medium text-[#14594a]">01</span>
+              <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Multi-Loan Portfolio Consolidation
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Organise loan balances, interest rates, and minimum payments in one place. Categorise accounts as Federal or Private to monitor loan protections and balance-weighted interest exposure.
               </p>
-              <div className="pt-3 border-t border-[#f1f5f9] text-xs text-[#64748b] flex justify-between">
+              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
                 <span>Combined monthly minimum</span>
-                <span className="font-medium text-[#0f172a]">True weighted portfolio APR</span>
+                <span className="font-medium text-[#231f1b]">True weighted portfolio APR</span>
               </div>
             </div>
 
             {/* Feature 2 */}
             <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#2563eb]">02</span>
-              <h3 className="font-display text-lg font-bold text-[#0f172a]">
+              <span className="font-mono text-xs font-medium text-[#14594a]">02</span>
+              <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Avalanche vs. Snowball Comparison
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Compare minimum payments, Debt Avalanche (highest APR first), and Debt Snowball (smallest balance first). Exact month-by-month principal reduction and rollover cascading show your debt-free date.
               </p>
-              <div className="pt-3 border-t border-[#f1f5f9] text-xs text-[#64748b] flex justify-between">
+              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
                 <span>Month-by-month schedules</span>
-                <span className="font-medium text-[#0f172a]">Debt-free month projections</span>
+                <span className="font-medium text-[#231f1b]">Debt-free month projections</span>
               </div>
             </div>
 
             {/* Feature 3 */}
             <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#2563eb]">03</span>
-              <h3 className="font-display text-lg font-bold text-[#0f172a]">
+              <span className="font-mono text-xs font-medium text-[#14594a]">03</span>
+              <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Hypothetical Refinancing Evaluator
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Estimate hypothetical refinancing payments, interest, and total repayment costs. Detect the &ldquo;lower payment trap&rdquo; where extended terms lower monthly cash outflow but dramatically increase total interest.
               </p>
-              <div className="pt-3 border-t border-[#f1f5f9] text-xs text-[#64748b] flex justify-between">
+              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
                 <span>Closing fee treatment</span>
-                <span className="font-medium text-[#0f172a]">Federal relief warnings</span>
+                <span className="font-medium text-[#231f1b]">Federal relief warnings</span>
               </div>
             </div>
 
             {/* Feature 4 */}
             <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#2563eb]">04</span>
-              <h3 className="font-display text-lg font-bold text-[#0f172a]">
+              <span className="font-mono text-xs font-medium text-[#14594a]">04</span>
+              <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Saved Scenarios & Modeling Archives
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Save customized repayment and refinancing scenarios to your account. Reload past simulations anytime to review assumptions, budget changes, or extra payment milestones without re-entering data.
               </p>
-              <div className="pt-3 border-t border-[#f1f5f9] text-xs text-[#64748b] flex justify-between">
+              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
                 <span>Single-click scenario restore</span>
-                <span className="font-medium text-[#0f172a]">Account-isolated models</span>
+                <span className="font-medium text-[#231f1b]">Account-isolated models</span>
               </div>
             </div>
           </div>
@@ -204,44 +126,44 @@ export default function Home() {
       </section>
 
       {/* 3. How ClearPath Works */}
-      <section id="how-it-works" className="py-20 bg-white border-b border-[#e2e8f0]">
+      <section id="how-it-works" className="py-20 bg-[#fffdf8] border-b border-[#e4dccb]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="max-w-2xl mb-14">
-            <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0f172a]">
+            <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
               How ClearPath works.
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-[#64748b]">
+            <p className="mt-2 text-sm sm:text-base text-[#62594e]">
               Get started in three simple steps without linking bank accounts or running credit checks.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#2563eb]">Step 1</div>
-              <h3 className="font-display text-base font-bold text-[#0f172a]">
+              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 1</div>
+              <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Create your account
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Set up a secure login with your email address. Your loan portfolio and simulation data are encrypted and kept private.
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#2563eb]">Step 2</div>
-              <h3 className="font-display text-base font-bold text-[#0f172a]">
+              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 2</div>
+              <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Enter your student loans
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Add balances, APRs, and minimum payments for each loan account. We compute your combined baseline and weighted APR.
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#2563eb]">Step 3</div>
-              <h3 className="font-display text-base font-bold text-[#0f172a]">
+              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 3</div>
+              <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Compare strategies & explore refinancing
               </h3>
-              <p className="text-sm text-[#475569] leading-relaxed">
+              <p className="text-sm text-[#4a4239] leading-relaxed">
                 Test extra monthly payments to see your exact payoff acceleration and evaluate whether refinancing quotes save money.
               </p>
             </div>
@@ -250,11 +172,11 @@ export default function Home() {
       </section>
 
       {/* 4. Disclaimers & Trust Notice */}
-      <section className="py-14 bg-[#f8fafc] border-b border-[#e2e8f0]">
+      <section className="py-14 bg-[#f6f1e7] border-b border-[#e4dccb]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="rounded-lg border border-[#cbd5e1] bg-white p-6 space-y-3 text-xs leading-relaxed text-[#64748b]">
-            <div className="flex items-center gap-2 font-display font-semibold text-[#0f172a] text-sm">
-              <ShieldCheck className="h-4 w-4 text-[#2563eb]" />
+          <div className="rounded-lg border border-[#d6ccb8] bg-[#fffdf8] p-6 space-y-3 text-xs leading-relaxed text-[#62594e]">
+            <div className="flex items-center gap-2 font-display font-semibold text-[#231f1b] text-sm">
+              <ShieldCheck className="h-4 w-4 text-[#14594a]" />
               <span>Independent Decision-Support & Educational Planning Notice</span>
             </div>
             <p>
@@ -268,12 +190,12 @@ export default function Home() {
       </section>
 
       {/* 5. Final Call to Action */}
-      <section className="py-20 bg-white text-center">
+      <section className="py-20 bg-[#fffdf8] text-center">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 space-y-5">
-          <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0f172a]">
+          <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
             Your next step towards a clearer repayment plan.
           </h2>
-          <p className="text-sm sm:text-base text-[#64748b]">
+          <p className="text-sm sm:text-base text-[#62594e]">
             Create a free account to organize your loans and start modeling accelerated payoff strategies today.
           </p>
           <div className="pt-2">

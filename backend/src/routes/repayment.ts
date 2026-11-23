@@ -5,6 +5,7 @@ import { compareStrategies } from '../services/finance/repayment';
 import { authMiddleware } from '../middleware/auth';
 import { LoanType } from '../types/finance';
 import { serializeDecimalValues } from '../utils/serialize';
+import { isIsoCurrency, mixedCurrencies, MIXED_CURRENCY_ERROR } from '../utils/currency';
 
 const router = Router();
 
@@ -15,6 +16,7 @@ const loanSchema = z.object({
   interest_rate: z.number().min(0).max(100),
   minimum_payment: z.number().positive().max(1000000),
   loan_type: z.enum(['Federal', 'Private', 'Unknown']).optional(),
+  currency: z.string().refine(isIsoCurrency, 'Unsupported currency').optional(),
 });
 
 const compareSchema = z.object({
@@ -26,6 +28,7 @@ router.post('/repayment/compare', authMiddleware, (req, res) => {
   const parsed = compareSchema.safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ error: 'Validation failed', details: parsed.error.flatten() });
   const { loans, extra_monthly_payment } = parsed.data;
+  if (mixedCurrencies(loans)) return res.status(422).json({ error: MIXED_CURRENCY_ERROR });
   const financeLoans = loans.map((loan) => ({
     ...loan,
     loan_type: loan.loan_type === 'Federal'

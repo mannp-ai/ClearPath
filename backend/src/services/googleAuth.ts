@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { requireUrl } from '../config/urls';
 import { User, IUser } from '../models/User';
 
 export interface GoogleUserPayload {
@@ -26,16 +27,13 @@ export function getGoogleClientSecret(): string {
 }
 
 export function getGoogleCallbackUrl(): string {
-  return (
-    process.env.GOOGLE_CALLBACK_URL ||
-    'http://localhost:4000/api/v1/auth/google/callback'
-  );
+  return requireUrl('GOOGLE_CALLBACK_URL', 'http://localhost:4000/api/v1/auth/google/callback');
 }
 
 export function generateOAuthState(redirectPath?: string): string {
   const nonce = crypto.randomBytes(16).toString('hex');
   const payload = JSON.stringify({ nonce, redirect: redirectPath || '/loans', ts: Date.now() });
-  const secret = process.env.JWT_ACCESS_SECRET || 'clearpath-oauth-state-secret-default';
+  const secret = process.env.JWT_ACCESS_SECRET!;
   const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
   return Buffer.from(`${payload}.${sig}`).toString('base64url');
 }
@@ -46,7 +44,7 @@ export function verifyOAuthState(state: string): { redirect: string } | null {
     const parts = raw.split('.');
     if (parts.length !== 2) return null;
     const [payload, sig] = parts;
-    const secret = process.env.JWT_ACCESS_SECRET || 'clearpath-oauth-state-secret-default';
+    const secret = process.env.JWT_ACCESS_SECRET!;
     const expectedSig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
     if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
       return null;
@@ -221,6 +219,8 @@ export async function handleGoogleIdentity(
     }
     // Safe linking: Google has verified email ownership
     existingByEmail.googleId = payload.sub;
+    // An unverified local account may have been pre-registered by someone else: drop its password.
+    if (!existingByEmail.emailVerified) existingByEmail.passwordHash = undefined;
     existingByEmail.emailVerified = true;
     if (payload.name && !existingByEmail.profile?.name) {
       existingByEmail.profile = { ...existingByEmail.profile, name: payload.name };
@@ -233,19 +233,27 @@ export async function handleGoogleIdentity(
   }
 
   // 3. Create a new user record
-  const newUser = await User.create({
-    email: normalizedEmail,
-    googleId: payload.sub,
-    authProvider: 'google',
-    role: 'USER',
-    status: 'active',
-    emailVerified: true,
-    sessionVersion: 0,
-    profile: {
-      name: payload.name,
-      picture: payload.picture,
-    },
-  });
-
-  return { user: newUser, isNew: true };
+  try {
+    const newUser = await User.create({
+      email: normalizedEmail,
+      googleId: payload.sub,
+      authProvider: 'google',
+      role: 'USER',
+      status: 'active',
+      emailVerified: true,
+      sessionVersion: 0,
+      profile: {
+        name: payload.name,
+        picture: payload.picture,
+      },
+    });
+    return { user: newUser, isNew: true };
+  } catch (err: any) {
+    // Concurrent first sign-ins: the unique index rejected the duplicate; reuse the winner (same Google subject only).
+    if (err?.code === 11000) {
+      const winner = await User.findOne({ googleId: payload.sub });
+      if (winner && winner.status === 'active') return { user: winner, isNew: false };
+    }
+    throw err;
+  }
 }

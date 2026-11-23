@@ -13,6 +13,7 @@ export interface IUser extends Document {
   emailVerified: boolean;
   sessionVersion: number;
   profile: { name?: string; picture?: string };
+  preferences?: { country?: string; currency?: string };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,6 +30,10 @@ const UserSchema = new Schema<IUser>({
   profile: {
     name: { type: String, trim: true },
     picture: { type: String, trim: true },
+  },
+  preferences: {
+    country: { type: String, uppercase: true, match: /^[A-Z]{2}$/ },
+    currency: { type: String, uppercase: true, match: /^[A-Z]{3}$/ },
   },
 }, { timestamps: true });
 

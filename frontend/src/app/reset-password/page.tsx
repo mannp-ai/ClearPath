@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -37,13 +37,13 @@ function ResetPasswordForm() {
     <div className="w-full max-w-md">
       <div className="cp-card p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-1">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563eb] text-white shadow-xs mb-3">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#f4b942] text-[#231f1b] shadow-xs mb-3">
             <KeyRound className="h-5 w-5" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
+          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
             {token ? 'Set New Password' : 'Reset Password'}
           </h1>
-          <p className="text-xs sm:text-sm text-[#64748b]">
+          <p className="text-xs sm:text-sm text-[#62594e]">
             {token
               ? 'Enter a new password for your ClearPath account.'
               : "Enter your registered email address and we'll send a password recovery link."}
@@ -53,9 +53,9 @@ function ResetPasswordForm() {
         {error && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#dc2626]"
+            className="flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#b91c1c]"
           >
-            <AlertCircle className="h-4 w-4 shrink-0 text-[#dc2626] mt-0.5" />
+            <AlertCircle className="h-4 w-4 shrink-0 text-[#b91c1c] mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -65,8 +65,8 @@ function ResetPasswordForm() {
             role="status"
             className="rounded-lg border border-[#a7f3d0] bg-[#ecfdf5] p-5 text-center space-y-3"
           >
-            <CheckCircle2 className="h-8 w-8 text-[#168568] mx-auto" />
-            <div className="text-sm font-semibold text-[#168568]">
+            <CheckCircle2 className="h-8 w-8 text-[#0f6b53] mx-auto" />
+            <div className="text-sm font-semibold text-[#0f6b53]">
               {message}
             </div>
             <div className="pt-2">
@@ -84,12 +84,12 @@ function ResetPasswordForm() {
               <div>
                 <label
                   htmlFor="new-password"
-                  className="block text-xs font-semibold uppercase tracking-wider text-[#64748b] mb-1.5"
+                  className="block text-xs font-semibold uppercase tracking-wider text-[#62594e] mb-1.5"
                 >
                   New password (at least 8 characters)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-[#94a3b8]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
@@ -100,14 +100,14 @@ function ResetPasswordForm() {
                     minLength={8}
                     maxLength={128}
                     required
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-[#94a3b8] hover:text-[#334155]"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-[#62594e] hover:text-[#3d3630]"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -118,12 +118,12 @@ function ResetPasswordForm() {
               <div>
                 <label
                   htmlFor="reset-email"
-                  className="block text-xs font-semibold uppercase tracking-wider text-[#64748b] mb-1.5"
+                  className="block text-xs font-semibold uppercase tracking-wider text-[#62594e] mb-1.5"
                 >
                   Email address
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-[#94a3b8]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
                     <Mail className="h-4 w-4" />
                   </span>
                   <input
@@ -146,7 +146,7 @@ function ResetPasswordForm() {
               className="cp-btn-primary w-full mt-2"
             >
               {submitting ? (
-                <span>Please waitâ€¦</span>
+                <span>Please wait…</span>
               ) : (
                 <>
                   <span>{token ? 'Update Password' : 'Send Recovery Link'}</span>
@@ -157,10 +157,10 @@ function ResetPasswordForm() {
           </form>
         )}
 
-        <div className="pt-4 border-t border-[#f1f5f9] text-center">
+        <div className="pt-4 border-t border-[#efe8d8] text-center">
           <Link
             href="/login"
-            className="inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#0f172a]"
+            className="inline-flex items-center gap-1 py-2 text-sm text-[#62594e] hover:text-[#231f1b]"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to login</span>
@@ -176,8 +176,8 @@ export default function ResetPasswordPage() {
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
       <Suspense
         fallback={
-          <div className="cp-card p-8 text-center text-sm text-[#64748b]">
-            Loading password resetâ€¦
+          <div className="cp-card p-8 text-center text-sm text-[#62594e]">
+            Loading password reset…
           </div>
         }
       >

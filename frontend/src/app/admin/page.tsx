@@ -79,16 +79,16 @@ export default function AdminPage() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10 space-y-6">
       {/* Page Header */}
-      <div className="pb-6 border-b border-[#e6eaf0] flex items-center justify-between">
+      <div className="cp-masthead flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#bfdbfe] bg-[#eff4ff] px-2.5 py-0.5 text-xs font-semibold text-[#4169e1] mb-2">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#bcd8c9] bg-[#e6f0e9] px-2.5 py-0.5 text-xs font-semibold text-[#0f4a3d] mb-2">
             <ShieldCheck className="h-3 w-3" />
             <span>Internal Administration</span>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#172033]">
+          <h1 className="font-head">
             User Account Management
           </h1>
-          <p className="mt-1 text-sm text-[#64748b]">
+          <p className="mt-1 text-sm text-[#62594e]">
             Review registered accounts, role entitlements, and operational status.
           </p>
         </div>
@@ -97,9 +97,9 @@ export default function AdminPage() {
       {error && (
         <div
           role="alert"
-          className="flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-xs sm:text-sm text-[#dc2626]"
+          className="flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-xs sm:text-sm text-[#b91c1c]"
         >
-          <AlertCircle className="h-5 w-5 shrink-0 text-[#dc2626]" />
+          <AlertCircle className="h-5 w-5 shrink-0 text-[#b91c1c]" />
           <div>
             <strong className="font-semibold">Administration alert: </strong>
             <span>{error}</span>
@@ -108,12 +108,12 @@ export default function AdminPage() {
       )}
 
       {loading ? (
-        <div className="cp-card p-12 text-center text-sm text-[#64748b]">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#4169e1] border-t-transparent mb-3" />
+        <div className="cp-card p-12 text-center text-sm text-[#62594e]">
+          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#0f4a3d] border-t-transparent mb-3" />
           <p>Loading user directories…</p>
         </div>
       ) : users.length === 0 ? (
-        <div className="cp-card p-10 text-center text-sm text-[#64748b]">
+        <div className="cp-card p-10 text-center text-sm text-[#62594e]">
           No user accounts found.
         </div>
       ) : (
@@ -122,19 +122,19 @@ export default function AdminPage() {
             <table className="w-full text-left text-xs sm:text-sm">
               <caption className="sr-only">User accounts and roles</caption>
               <thead>
-                <tr className="border-b border-[#e6eaf0] bg-[#f8fafc] text-xs font-semibold text-[#64748b] uppercase tracking-wider">
+                <tr className="border-b border-[#e4dccb] bg-[#f6f1e7] text-xs font-semibold text-[#62594e] uppercase tracking-wider">
                   <th scope="col" className="py-3.5 px-4 sm:px-6">User Account</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6">Role Entitlement</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6">Account Status</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6 text-right">Access Controls</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-[#efe8d8]">
                 {users.map((user) => {
                   const canManageAccount =
                     currentUser?.role === 'SUPER_ADMIN' || user.role === 'USER';
                   return (
-                    <tr key={user._id} className="hover:bg-[#f8fafc] transition-colors">
+                    <tr key={user._id} className="hover:bg-[#f6f1e7] transition-colors">
                       <td className="py-3.5 px-4 sm:px-6 font-medium text-[#172033]">
                         {user.email}
                       </td>
@@ -157,10 +157,10 @@ export default function AdminPage() {
                           <span
                             className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                               user.role === 'SUPER_ADMIN'
-                                ? 'bg-[#eff4ff] text-[#4169e1]'
+                                ? 'bg-[#e6f0e9] text-[#0f4a3d]'
                                 : user.role === 'ADMIN'
-                                ? 'bg-[#f5f3ff] text-[#7c3aed]'
-                                : 'bg-[#f1f5f9] text-[#64748b]'
+                                ? 'bg-[#f6eaf2] text-[#7a3b69]'
+                                : 'bg-[#efe8d8] text-[#62594e]'
                             }`}
                           >
                             {user.role}
@@ -171,13 +171,13 @@ export default function AdminPage() {
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             user.status === 'active'
-                              ? 'bg-[#ecfdf5] text-[#168568]'
-                              : 'bg-[#fef2f2] text-[#dc2626]'
+                              ? 'bg-[#ecfdf5] text-[#0f6b53]'
+                              : 'bg-[#fef2f2] text-[#b91c1c]'
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              user.status === 'active' ? 'bg-[#168568]' : 'bg-[#dc2626]'
+                              user.status === 'active' ? 'bg-[#0f6b53]' : 'bg-[#dc2626]'
                             }`}
                           />
                           <span className="capitalize">{user.status}</span>
@@ -187,10 +187,10 @@ export default function AdminPage() {
                         {canManageAccount ? (
                           <button
                             type="button"
-                            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                            className={`rounded px-3 py-2 text-xs font-medium transition-colors ${
                               user.status === 'active'
-                                ? 'text-[#dc2626] hover:bg-[#fef2f2]'
-                                : 'text-[#168568] hover:bg-[#ecfdf5]'
+                                ? 'text-[#b91c1c] hover:bg-[#fef2f2]'
+                                : 'text-[#0f6b53] hover:bg-[#ecfdf5]'
                             }`}
                             disabled={updatingId === user._id}
                             onClick={() => setStatus(user)}
@@ -202,7 +202,7 @@ export default function AdminPage() {
                               : 'Activate'}
                           </button>
                         ) : (
-                          <span className="text-xs text-[#94a3b8]">Protected</span>
+                          <span className="text-xs text-[#62594e]">Protected</span>
                         )}
                       </td>
                     </tr>

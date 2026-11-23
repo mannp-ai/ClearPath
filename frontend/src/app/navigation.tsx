@@ -68,6 +68,7 @@ export default function Navigation() {
     { href: '/loans', label: 'Portfolio' },
     { href: '/repayment', label: 'Repayment Strategies' },
     { href: '/refinancing', label: 'Refinancing' },
+    { href: '/settings', label: 'Settings' },
   ];
 
   const unauthenticatedLinks = [
@@ -85,19 +86,19 @@ export default function Navigation() {
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full transition-all duration-150 backdrop-blur-md ${
+      className={`sticky top-0 z-40 w-full transition-all duration-150 ${
         scrolled
-          ? 'border-b border-[#cbd5e1] bg-white/95 shadow-xs'
-          : 'border-b border-[#e2e8f0] bg-white/90'
+          ? 'border-b border-[#d6ccb8] bg-[#fffdf8] shadow-xs'
+          : 'border-b border-[#e4dccb] bg-[#fffdf8]'
       }`}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Brand */}
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-base font-bold tracking-tight text-[#0f172a] hover:opacity-90 active:scale-[0.98] transition-all"
+          className="flex items-center gap-2 font-display text-base font-bold tracking-tight text-[#231f1b] hover:opacity-90 active:scale-[0.98] transition-all"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#0f172a] text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f4b942] text-[#231f1b]">
             <svg
               className="h-3.5 w-3.5"
               viewBox="0 0 24 24"
@@ -115,7 +116,7 @@ export default function Navigation() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Main Navigation">
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main">
           {user ? (
             <>
               {authenticatedLinks.map((link) => {
@@ -124,10 +125,11 @@ export default function Navigation() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                    aria-current={active ? 'page' : undefined}
+                    className={`rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
                       active
-                        ? 'bg-[#f1f5f9] text-[#0f172a] font-semibold'
-                        : 'text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a]'
+                        ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
+                        : 'text-[#4a4239] hover:bg-[#f6f1e7] hover:text-[#231f1b]'
                     }`}
                   >
                     {link.label}
@@ -138,13 +140,13 @@ export default function Navigation() {
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
                     isActive('/admin')
-                      ? 'bg-[#f1f5f9] text-[#0f172a] font-semibold'
-                      : 'text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a]'
+                      ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
+                      : 'text-[#4a4239] hover:bg-[#f6f1e7] hover:text-[#231f1b]'
                   }`}
                 >
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#2563eb]" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#14594a]" />
                   <span>Admin</span>
                 </Link>
               )}
@@ -155,7 +157,7 @@ export default function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium text-[#475569] hover:text-[#0f172a] transition-colors"
+                  className="rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#4a4239] hover:text-[#231f1b] transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -167,17 +169,17 @@ export default function Navigation() {
         {/* Desktop Auth Controls */}
         <div className="hidden md:flex items-center gap-2.5">
           {status === 'loading' ? (
-            <div className="h-7 w-20 animate-pulse rounded-md bg-[#f1f5f9]" />
+            <div className="h-7 w-20 animate-pulse rounded-md bg-[#efe8d8]" />
           ) : user ? (
             <div className="flex items-center gap-2.5">
-              <span className="flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-[#f8fafc] px-2.5 py-0.5 text-xs font-mono text-[#334155]">
-                <UserIcon className="h-3 w-3 text-[#64748b]" />
+              <span className="hidden lg:flex items-center gap-1.5 rounded-full border border-[#e4dccb] bg-[#f6f1e7] px-2.5 py-0.5 text-xs font-mono text-[#3d3630]">
+                <UserIcon className="h-3 w-3 text-[#62594e]" />
                 <span className="max-w-[130px] truncate">{user.email}</span>
               </span>
               <button
                 type="button"
                 onClick={signOut}
-                className="interactive-tap flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[#64748b] hover:bg-[#fef2f2] hover:text-[#dc2626]"
+                className="interactive-tap flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-sm text-[#4a4239] hover:bg-[#fef2f2] hover:text-[#b91c1c]"
                 title="Log out"
               >
                 <LogOut className="h-3 w-3" />
@@ -188,13 +190,13 @@ export default function Navigation() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="interactive-tap rounded-md px-3 py-1.5 text-xs font-medium text-[#475569] hover:text-[#0f172a]"
+                className="interactive-tap rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#4a4239] hover:text-[#231f1b]"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="interactive-tap inline-flex items-center justify-center rounded-md bg-[#0f172a] px-3.5 py-1.5 text-xs font-medium text-white hover:bg-[#1e293b]"
+                className="interactive-tap inline-flex items-center justify-center rounded-md bg-[#14594a] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4a3d]"
               >
                 <span>Get Started</span>
                 <ArrowRight className="ml-1 h-3 w-3" />
@@ -208,7 +210,7 @@ export default function Navigation() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="interactive-tap inline-flex items-center justify-center rounded-md p-1.5 text-[#475569] hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+            className="interactive-tap inline-flex items-center justify-center rounded-md p-2.5 text-[#4a4239] hover:bg-[#efe8d8] hover:text-[#231f1b]"
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle navigation menu"
           >
@@ -219,7 +221,7 @@ export default function Navigation() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="border-b border-[#e2e8f0] bg-white px-4 pt-2 pb-5 md:hidden shadow-md">
+        <div className="border-b border-[#e4dccb] bg-[#fffdf8] px-4 pt-2 pb-5 md:hidden shadow-md">
           <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
             {user ? (
               <>
@@ -230,14 +232,14 @@ export default function Navigation() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                      className={`flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
                         active
-                          ? 'bg-[#f1f5f9] text-[#0f172a] font-semibold'
-                          : 'text-[#334155] hover:bg-[#f8fafc]'
+                          ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
+                          : 'text-[#3d3630] hover:bg-[#f6f1e7]'
                       }`}
                     >
                       <span>{link.label}</span>
-                      {active && <span className="h-1.5 w-1.5 rounded-full bg-[#0f172a]" />}
+                      {active && <span className="h-1.5 w-1.5 rounded-full bg-[#14594a]" />}
                     </Link>
                   );
                 })}
@@ -246,27 +248,27 @@ export default function Navigation() {
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
                       isActive('/admin')
-                        ? 'bg-[#f1f5f9] text-[#0f172a] font-semibold'
-                        : 'text-[#334155] hover:bg-[#f8fafc]'
+                        ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
+                        : 'text-[#3d3630] hover:bg-[#f6f1e7]'
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4 text-[#2563eb]" />
+                      <ShieldCheck className="h-4 w-4 text-[#14594a]" />
                       <span>Admin</span>
                     </div>
                   </Link>
                 )}
 
-                <div className="mt-3 pt-3 border-t border-[#f1f5f9] space-y-2">
-                  <div className="px-3 text-xs text-[#64748b]">
-                    Signed in as <strong className="text-[#0f172a] font-medium">{user.email}</strong>
+                <div className="mt-3 pt-3 border-t border-[#efe8d8] space-y-2">
+                  <div className="px-3 text-xs text-[#62594e]">
+                    Signed in as <strong className="text-[#231f1b] font-medium">{user.email}</strong>
                   </div>
                   <button
                     type="button"
                     onClick={signOut}
-                    className="interactive-tap flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-[#dc2626] hover:bg-[#fef2f2]"
+                    className="interactive-tap flex w-full items-center gap-2 rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#b91c1c] hover:bg-[#fef2f2]"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Log out</span>
@@ -280,24 +282,24 @@ export default function Navigation() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-[#334155] hover:bg-[#f8fafc] transition-colors"
+                    className="flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#3d3630] hover:bg-[#f6f1e7] transition-colors"
                   >
                     <span>{link.label}</span>
                   </Link>
                 ))}
 
-                <div className="mt-3 pt-3 border-t border-[#f1f5f9] flex flex-col gap-2">
+                <div className="mt-3 pt-3 border-t border-[#efe8d8] flex flex-col gap-2">
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="interactive-tap flex items-center justify-center rounded-md border border-[#e2e8f0] bg-white px-3 py-2 text-center text-xs font-medium text-[#0f172a] hover:bg-[#f8fafc]"
+                    className="interactive-tap flex items-center justify-center rounded-md border border-[#e4dccb] bg-[#fffdf8] px-3 py-2 text-center text-xs font-medium text-[#231f1b] hover:bg-[#f6f1e7]"
                   >
                     Log in
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="interactive-tap flex items-center justify-center rounded-md bg-[#0f172a] px-3 py-2 text-center text-xs font-medium text-white hover:bg-[#1e293b]"
+                    className="interactive-tap flex items-center justify-center rounded-md bg-[#14594a] px-3 py-2 text-center text-xs font-medium text-white hover:bg-[#0f4a3d]"
                   >
                     Get Started
                   </Link>

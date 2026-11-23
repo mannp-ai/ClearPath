@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { Scenario } from '../models/Scenario';
 import { authMiddleware } from '../middleware/auth';
 import { asyncHandler } from '../middleware/asyncHandler';
+import { isIsoCurrency } from '../utils/currency';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ const schema = z.object({
   loanSnapshot: z.array(z.object({
     name: z.string().min(1).max(100),
     type: z.enum(['Federal', 'Private', 'Unknown']),
+    currency: z.string().refine(isIsoCurrency, 'Unsupported currency').optional(),
     balance: z.number().positive().max(10000000),
     interest_rate: z.number().min(0).max(100),
     minimum_payment: z.number().positive().max(1000000),

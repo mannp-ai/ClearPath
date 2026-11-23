@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { requireUrl } from '../config/urls';
 
 export type MailProviderType = 'gmail_oauth2' | 'smtp' | 'test';
 
@@ -72,7 +73,7 @@ function createTransport(): nodemailer.Transporter {
 }
 
 function actionUrl(path: string, token: string): string {
-  const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const baseUrl = requireUrl('FRONTEND_URL', 'http://localhost:3000');
   const url = new URL(path, baseUrl);
   url.searchParams.set('token', token);
   return url.toString();

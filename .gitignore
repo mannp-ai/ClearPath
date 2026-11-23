@@ -25,7 +25,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -48,6 +48,10 @@ htmlcov/
 **/.env.*
 !**/.env.example
 !**/.env.*.example
+# Any other credential file ending in .env
+*.env
+# Google OAuth client secret downloads
+client_secret_*.json
 
 # IDE
 .vscode/

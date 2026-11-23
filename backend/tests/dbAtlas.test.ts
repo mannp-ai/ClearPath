@@ -54,3 +54,15 @@ describe('MongoDB Atlas Database Connection Module', () => {
     expect(mongoose.connect).not.toHaveBeenCalled();
   });
 });
+
+describe('MONGODB_URI requirement and 503 handling', () => {
+  const saved = process.env.MONGODB_URI;
+  afterEach(() => { process.env.MONGODB_URI = saved; });
+
+  it('does not fall back to localhost when MONGODB_URI is missing', async () => {
+    delete process.env.MONGODB_URI;
+    (mongoose.connect as jest.Mock).mockClear();
+    await expect(connectDB()).rejects.toThrow('MONGODB_URI');
+    expect(mongoose.connect).not.toHaveBeenCalled();
+  });
+});

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -13,7 +13,7 @@ function VerifyEmailContent() {
   const token = searchParams.get('token');
   const [state, setState] = useState<VerificationState>({
     status: 'checking',
-    message: 'Verifying your email addressâ€¦',
+    message: 'Verifying your email address…',
   });
 
   useEffect(() => {
@@ -37,17 +37,17 @@ function VerifyEmailContent() {
   return (
     <div className="w-full max-w-md">
       <div className="cp-card p-6 sm:p-8 space-y-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#eff6ff] text-[#2563eb] mb-2">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0e9] text-[#14594a] mb-2">
           {status === 'success' ? (
-            <CheckCircle2 className="h-6 w-6 text-[#168568]" />
+            <CheckCircle2 className="h-6 w-6 text-[#0f6b53]" />
           ) : status === 'error' ? (
-            <AlertCircle className="h-6 w-6 text-[#dc2626]" />
+            <AlertCircle className="h-6 w-6 text-[#b91c1c]" />
           ) : (
-            <MailCheck className="h-6 w-6 text-[#2563eb]" />
+            <MailCheck className="h-6 w-6 text-[#14594a]" />
           )}
         </div>
 
-        <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
+        <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
           Email Verification
         </h1>
 
@@ -55,10 +55,10 @@ function VerifyEmailContent() {
           role={status === 'error' ? 'alert' : 'status'}
           className={`rounded-lg p-4 text-xs sm:text-sm leading-relaxed ${
             status === 'success'
-              ? 'border border-[#a7f3d0] bg-[#ecfdf5] text-[#168568]'
+              ? 'border border-[#a7f3d0] bg-[#ecfdf5] text-[#0f6b53]'
               : status === 'error'
-              ? 'border border-[#fecaca] bg-[#fef2f2] text-[#dc2626]'
-              : 'border border-[#e6eaf0] bg-[#f8fafc] text-[#64748b]'
+              ? 'border border-[#fecaca] bg-[#fef2f2] text-[#b91c1c]'
+              : 'border border-[#e4dccb] bg-[#f6f1e7] text-[#62594e]'
           }`}
         >
           {message}
@@ -92,8 +92,8 @@ export default function VerifyEmailPage() {
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
       <Suspense
         fallback={
-          <div className="cp-card p-8 text-center text-sm text-[#64748b]">
-            Checking verification linkâ€¦
+          <div className="cp-card p-8 text-center text-sm text-[#62594e]">
+            Checking verification link…
           </div>
         }
       >

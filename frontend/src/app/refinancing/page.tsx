@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -18,17 +18,8 @@ import {
   type LoanRecord,
   type RefinanceResult,
 } from '@/lib/api';
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-function money(value: number | string | null | undefined): string {
-  return value == null ? 'â€”' : currency.format(Number(value));
-}
+import { usePreferences } from '@/lib/preferences';
+import { currencySymbol, formatMoney, portfolioCurrency } from '@/lib/currency';
 
 export default function RefinancingPage() {
   const [loans, setLoans] = useState<LoanRecord[]>([]);
@@ -43,6 +34,14 @@ export default function RefinancingPage() {
   const [calculating, setCalculating] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { currency: prefCurrency, locale } = usePreferences();
+  const pCur = portfolioCurrency(loans);
+  const mixed = pCur === 'MIXED';
+  const cur = !pCur || mixed ? prefCurrency : pCur;
+  const money = (value: number | string | null | undefined) => formatMoney(value, cur, locale, 2);
+  const symbol = currencySymbol(cur, locale);
+  // shortcut: the engine's explanation text hardcodes '$'; re-format its amounts here, replace when the engine takes a currency.
+  const localizeAmounts = (text: string) => text.replace(/\$(\d[\d,]*(?:\.\d+)?)/g, (_m, n: string) => money(Number(n.replace(/,/g, ''))));
 
   const effectiveTermMonths = useYears ? termYears * 12 : parseInt(customMonths) || 12;
 
@@ -52,7 +51,7 @@ export default function RefinancingPage() {
       .then((currentLoans) => {
         if (active) {
           setLoans(currentLoans);
-          if (currentLoans.length > 0) {
+          if (currentLoans.length > 0 && portfolioCurrency(currentLoans) !== 'MIXED') {
             calculateRefinance(currentLoans, {
               proposed_interest_rate: 5.25,
               term_months: 84,
@@ -127,15 +126,15 @@ export default function RefinancingPage() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10 space-y-8 animate-fade-in">
       {/* Page Header */}
-      <div className="pb-6 border-b border-[#e6eaf0]">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#bfdbfe] bg-[#eff6ff] px-2.5 py-0.5 text-xs font-semibold text-[#2563eb] mb-2">
+      <div className="cp-masthead">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-[#bcd8c9] bg-[#e6f0e9] px-2.5 py-0.5 text-xs font-semibold text-[#14594a] mb-2">
           <RefreshCw className="h-3 w-3" />
           <span>Hypothetical Financial Modeling</span>
         </div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0f172a]">
+        <h1 className="font-head">
           Refinancing Cost & Cash Flow Evaluation
         </h1>
-        <p className="mt-1 text-sm text-[#64748b]">
+        <p className="mt-1 text-sm text-[#62594e]">
           Test whether a proposed interest rate, term length, and closing fees actually save you money.
         </p>
       </div>
@@ -160,10 +159,10 @@ export default function RefinancingPage() {
                 a private loan, you <strong className="underline">permanently forfeit all federal benefits</strong>, including:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs font-medium text-[#92400e]">
-                <div>â€¢ Income-Driven Repayment (SAVE, IDR, PAYE)</div>
-                <div>â€¢ Public Service Loan Forgiveness (PSLF)</div>
-                <div>â€¢ Federal administrative deferment and forbearance</div>
-                <div>â€¢ Total and permanent disability discharge</div>
+                <div>• Income-Driven Repayment (SAVE, IDR, PAYE)</div>
+                <div>• Public Service Loan Forgiveness (PSLF)</div>
+                <div>• Federal administrative deferment and forbearance</div>
+                <div>• Total and permanent disability discharge</div>
               </div>
             </div>
           </div>
@@ -174,7 +173,7 @@ export default function RefinancingPage() {
       {error && (
         <div
           role="alert"
-          className="rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-sm text-[#dc2626]"
+          className="rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-sm text-[#b91c1c]"
         >
           <strong className="font-semibold">Calculation error: </strong>
           <span>{error}</span>
@@ -182,16 +181,24 @@ export default function RefinancingPage() {
       )}
 
       {loading ? (
-        <div className="cp-card p-12 text-center text-sm text-[#64748b]">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#2563eb] border-t-transparent mb-3" />
-          <p>Loading your loansâ€¦</p>
+        <div className="cp-card p-12 text-center text-sm text-[#62594e]">
+          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#14594a] border-t-transparent mb-3" />
+          <p>Loading your loans…</p>
+        </div>
+      ) : mixed ? (
+        <div role="status" className="cp-card p-8 text-center">
+          <h3 className="font-head text-lg font-semibold text-[#231f1b]">Your loans use more than one currency</h3>
+          <p className="mx-auto mt-2 max-w-lg text-sm text-[#4a4239]">
+            ClearPath does not convert currencies, so it cannot evaluate a refinance across them. Review each loan&apos;s currency in your portfolio.
+          </p>
+          <Link href="/loans" className="cp-btn-secondary mt-4 inline-flex">Review loan currencies</Link>
         </div>
       ) : loans.length === 0 ? (
         <div className="cp-card p-12 text-center border-dashed">
-          <h3 className="font-display text-base font-bold text-[#0f172a]">
+          <h3 className="font-display text-base font-bold text-[#231f1b]">
             No loans to refinance
           </h3>
-          <p className="mt-1 text-sm text-[#64748b] max-w-sm mx-auto">
+          <p className="mt-1 text-sm text-[#62594e] max-w-sm mx-auto">
             Add your current student loans first so we can evaluate hypothetical refinance scenarios against them.
           </p>
           <div className="mt-5 flex justify-center">
@@ -207,11 +214,11 @@ export default function RefinancingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Form Column: Proposed Terms */}
           <div className="lg:col-span-5 cp-card p-5 sm:p-6 space-y-6">
-            <div className="border-b border-[#f1f5f9] pb-4">
-              <h2 className="font-display text-base font-bold text-[#0f172a]">
+            <div className="border-b border-[#efe8d8] pb-4">
+              <h2 className="font-display text-base font-bold text-[#231f1b]">
                 Hypothetical Refinancing Quote
               </h2>
-              <p className="text-xs text-[#64748b] mt-0.5">
+              <p className="text-xs text-[#62594e] mt-0.5">
                 Enter proposed interest rates and term lengths from any lender.
               </p>
             </div>
@@ -219,11 +226,11 @@ export default function RefinancingPage() {
             <form onSubmit={submit} className="space-y-4">
               {/* Proposed Interest Rate */}
               <div>
-                <label className="block text-xs font-medium text-[#475569] mb-1.5">
+                <label htmlFor="refinancing-field-1" className="block text-xs font-medium text-[#4a4239] mb-1.5">
                   Proposed interest rate (%)
                 </label>
                 <div className="relative">
-                  <input
+                  <input id="refinancing-field-1"
                     className="cp-input pr-7 font-mono font-semibold tabular-nums"
                     type="number"
                     min="0"
@@ -233,26 +240,26 @@ export default function RefinancingPage() {
                     value={rate}
                     onChange={(e) => setRate(e.target.value)}
                   />
-                  <span className="absolute right-3 top-2.5 text-xs font-medium text-[#94a3b8]">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#62594e]">%</span>
                 </div>
-                <span className="text-[11px] text-[#64748b] mt-1 block">
+                <span className="text-xs text-[#62594e] mt-1 block">
                   Current weighted portfolio average is{' '}
-                  <strong className="text-[#0f172a]">{currentWeightedRate.toFixed(2)}%</strong>
+                  <strong className="text-[#231f1b]">{currentWeightedRate.toFixed(2)}%</strong>
                 </span>
               </div>
 
               {/* Term Duration */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-[#475569]">
+                  <label className="text-xs font-medium text-[#4a4239]">
                     New loan term
                   </label>
                   <div className="flex items-center gap-1 text-xs">
                     <button
                       type="button"
                       onClick={() => setUseYears(true)}
-                      className={`px-2 py-0.5 rounded font-medium transition-colors ${
-                        useYears ? 'bg-[#0f172a] text-white' : 'text-[#64748b] hover:text-[#0f172a]'
+                      className={`px-3 py-1.5 rounded font-medium transition-colors ${
+                        useYears ? 'bg-[#14594a] text-white' : 'text-[#62594e] hover:text-[#231f1b]'
                       }`}
                     >
                       Years
@@ -260,8 +267,8 @@ export default function RefinancingPage() {
                     <button
                       type="button"
                       onClick={() => setUseYears(false)}
-                      className={`px-2 py-0.5 rounded font-medium transition-colors ${
-                        !useYears ? 'bg-[#0f172a] text-white' : 'text-[#64748b] hover:text-[#0f172a]'
+                      className={`px-3 py-1.5 rounded font-medium transition-colors ${
+                        !useYears ? 'bg-[#14594a] text-white' : 'text-[#62594e] hover:text-[#231f1b]'
                       }`}
                     >
                       Months
@@ -278,8 +285,8 @@ export default function RefinancingPage() {
                         onClick={() => setTermYears(yr)}
                         className={`interactive-tap py-2 text-xs font-semibold rounded-md border transition-all duration-150 ${
                           termYears === yr
-                            ? 'bg-[#2563eb] text-white border-[#2563eb] shadow-xs'
-                            : 'bg-white border-[#e6eaf0] text-[#334155] hover:bg-[#f8fafc]'
+                            ? 'bg-[#f4b942] text-[#231f1b] border-[#14594a] shadow-xs'
+                            : 'bg-[#fffdf8] border-[#e4dccb] text-[#3d3630] hover:bg-[#f6f1e7]'
                         }`}
                       >
                         {yr} yrs
@@ -298,19 +305,19 @@ export default function RefinancingPage() {
                     onChange={(e) => setCustomMonths(e.target.value)}
                   />
                 )}
-                <span className="text-[11px] text-[#64748b] mt-1 block">
+                <span className="text-xs text-[#62594e] mt-1 block">
                   Active term: <strong>{effectiveTermMonths} months</strong> ({(effectiveTermMonths / 12).toFixed(1)} years)
                 </span>
               </div>
 
               {/* Origination Fees */}
               <div>
-                <label className="block text-xs font-medium text-[#475569] mb-1.5">
-                  Origination / closing fees ($)
+                <label htmlFor="refinancing-field-2" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+                  Origination / closing fees ({symbol})
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs font-medium text-[#64748b] select-none pointer-events-none">$</span>
-                  <input
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#62594e] select-none pointer-events-none">{symbol}</span>
+                  <input id="refinancing-field-2"
                     className="cp-input pl-[34px] font-mono tabular-nums"
                     type="number"
                     min="0"
@@ -321,15 +328,15 @@ export default function RefinancingPage() {
                     onChange={(e) => setFees(e.target.value)}
                   />
                 </div>
-                <span className="text-[11px] text-[#64748b] mt-1 block">
-                  Most reputable student loan refinancers charge $0 origination fees.
+                <span className="text-xs text-[#62594e] mt-1 block">
+                  Most reputable student loan refinancers charge {money(0)} origination fees.
                 </span>
               </div>
 
               {/* Fee Treatment */}
               {Number(fees) > 0 && (
                 <div>
-                  <label className="block text-xs font-medium text-[#475569] mb-1.5">
+                  <label className="block text-xs font-medium text-[#4a4239] mb-1.5">
                     Fee treatment
                   </label>
                   <div className="grid grid-cols-2 gap-2 text-xs">
@@ -338,24 +345,24 @@ export default function RefinancingPage() {
                       onClick={() => setFeeTreatment('upfront')}
                       className={`p-2.5 rounded-lg border text-left font-medium transition-colors ${
                         feeTreatment === 'upfront'
-                          ? 'border-[#2563eb] bg-[#eff6ff] text-[#2563eb]'
-                          : 'border-[#e6eaf0] bg-white text-[#475569] hover:bg-[#f8fafc]'
+                          ? 'border-[#14594a] bg-[#e6f0e9] text-[#14594a]'
+                          : 'border-[#e4dccb] bg-[#fffdf8] text-[#4a4239] hover:bg-[#f6f1e7]'
                       }`}
                     >
                       <div>Paid Upfront</div>
-                      <div className="text-[10px] text-[#64748b] font-normal">Out of pocket at close</div>
+                      <div className="text-xs text-[#62594e] font-normal">Out of pocket at close</div>
                     </button>
                     <button
                       type="button"
                       onClick={() => setFeeTreatment('financed')}
                       className={`p-2.5 rounded-lg border text-left font-medium transition-colors ${
                         feeTreatment === 'financed'
-                          ? 'border-[#2563eb] bg-[#eff6ff] text-[#2563eb]'
-                          : 'border-[#e6eaf0] bg-white text-[#475569] hover:bg-[#f8fafc]'
+                          ? 'border-[#14594a] bg-[#e6f0e9] text-[#14594a]'
+                          : 'border-[#e4dccb] bg-[#fffdf8] text-[#4a4239] hover:bg-[#f6f1e7]'
                       }`}
                     >
                       <div>Financed in Loan</div>
-                      <div className="text-[10px] text-[#64748b] font-normal">Added to principal</div>
+                      <div className="text-xs text-[#62594e] font-normal">Added to principal</div>
                     </button>
                   </div>
                 </div>
@@ -369,7 +376,7 @@ export default function RefinancingPage() {
                 {calculating ? (
                   <span className="flex items-center gap-2">
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Calculating mathâ€¦</span>
+                    <span>Calculating math…</span>
                   </span>
                 ) : (
                   'Calculate Refinance Outcome'
@@ -386,17 +393,17 @@ export default function RefinancingPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Monthly Payment Impact */}
                   <div className="cp-card p-5 space-y-2">
-                    <span className="text-xs font-medium text-[#64748b]">
+                    <span className="text-xs font-medium text-[#62594e]">
                       Monthly payment impact
                     </span>
-                    <div className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-[#0f172a]">
+                    <div className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-[#231f1b]">
                       {money(result.proposed_monthly_payment)}
-                      <span className="text-xs font-normal text-[#64748b]">/mo</span>
+                      <span className="text-xs font-normal text-[#62594e]">/mo</span>
                     </div>
 
                     <div
                       className={`text-xs font-semibold flex items-center gap-1.5 ${
-                        isLowerMonthly ? 'text-[#15803d]' : 'text-[#334155]'
+                        isLowerMonthly ? 'text-[#15803d]' : 'text-[#3d3630]'
                       }`}
                     >
                       {isLowerMonthly ? (
@@ -406,43 +413,43 @@ export default function RefinancingPage() {
                         </>
                       ) : (
                         <>
-                          <TrendingUp className="h-4 w-4 text-[#64748b]" />
+                          <TrendingUp className="h-4 w-4 text-[#62594e]" />
                           Increases monthly bill by {money(Math.abs(Number(result.monthly_payment_difference)))}/mo
                         </>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#64748b] pt-2 border-t border-[#f1f5f9]">
+                    <p className="text-xs text-[#62594e] pt-2 border-t border-[#efe8d8]">
                       Compared to current combined minimum of {money(result.current_monthly_payment)}/mo.
                     </p>
                   </div>
 
                   {/* Total Cost Impact */}
                   <div className="cp-card p-5 space-y-2">
-                    <span className="text-xs font-medium text-[#64748b]">
+                    <span className="text-xs font-medium text-[#62594e]">
                       Lifetime total cost impact
                     </span>
-                    <div className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-[#0f172a]">
+                    <div className="font-display text-2xl sm:text-3xl font-bold tabular-nums text-[#231f1b]">
                       {money(result.proposed_total_cost)}
                     </div>
 
                     <div
                       className={`text-xs font-semibold flex items-center gap-1.5 ${
-                        isLowerTotalCost ? 'text-[#168568]' : 'text-[#dc2626]'
+                        isLowerTotalCost ? 'text-[#0f6b53]' : 'text-[#b91c1c]'
                       }`}
                     >
                       {isLowerTotalCost ? (
                         <>
-                          <CheckCircle2 className="h-4 w-4 text-[#168568]" />
+                          <CheckCircle2 className="h-4 w-4 text-[#0f6b53]" />
                           Saves {money(Math.abs(Number(result.total_cost_difference)))} in total lifetime interest
                         </>
                       ) : (
                         <>
-                          <AlertTriangle className="h-4 w-4 text-[#dc2626]" />
+                          <AlertTriangle className="h-4 w-4 text-[#b91c1c]" />
                           Costs {money(Math.abs(Number(result.total_cost_difference)))} MORE over lifetime
                         </>
                       )}
                     </div>
-                    <p className="text-[11px] text-[#64748b] pt-2 border-t border-[#f1f5f9]">
+                    <p className="text-xs text-[#62594e] pt-2 border-t border-[#efe8d8]">
                       Compared to baseline cost of {money(result.current_estimated_total_cost)}.
                     </p>
                   </div>
@@ -452,7 +459,7 @@ export default function RefinancingPage() {
                 {isLowerMonthly && !isLowerTotalCost && (
                   <div className="rounded-xl border border-[#fecaca] bg-[#fff5f5] p-4 text-xs text-[#991b1b] space-y-1">
                     <div className="font-semibold flex items-center gap-1.5">
-                      <AlertTriangle className="h-4 w-4 shrink-0 text-[#dc2626]" />
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-[#b91c1c]" />
                       <span>The &ldquo;Lower Monthly Payment&rdquo; Trap Detected</span>
                     </div>
                     <p className="leading-relaxed text-[#7f1d1d]">
@@ -466,57 +473,57 @@ export default function RefinancingPage() {
 
                 {/* Detailed Comparison Table */}
                 <div className="cp-card overflow-hidden">
-                  <div className="px-5 py-3.5 bg-[#f8fafc] border-b border-[#e6eaf0] flex items-center justify-between">
-                    <h3 className="font-display text-sm font-bold text-[#0f172a]">
+                  <div className="px-5 py-3.5 bg-[#f6f1e7] border-b border-[#e4dccb] flex items-center justify-between">
+                    <h3 className="font-display text-sm font-bold text-[#231f1b]">
                       Side-by-Side Financial Breakdown
                     </h3>
-                    <span className="text-xs text-[#64748b]">Current vs. Refinanced</span>
+                    <span className="text-xs text-[#62594e]">Current vs. Refinanced</span>
                   </div>
 
-                  <div className="divide-y divide-[#f1f5f9] text-xs sm:text-sm">
+                  <div className="divide-y divide-[#efe8d8] text-xs sm:text-sm">
                     <div className="py-3 px-5 flex justify-between items-center">
-                      <span className="text-[#64748b]">Principal Refinanced</span>
-                      <span className="font-display font-semibold tabular-nums text-[#0f172a]">
+                      <span className="text-[#62594e]">Principal Refinanced</span>
+                      <span className="font-display font-semibold tabular-nums text-[#231f1b]">
                         {money(totalBalance)}
                       </span>
                     </div>
 
                     <div className="py-3 px-5 flex justify-between items-center">
-                      <span className="text-[#64748b]">Interest Rate</span>
+                      <span className="text-[#62594e]">Interest Rate</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-[#94a3b8] line-through tabular-nums">
+                        <span className="text-[#62594e] line-through tabular-nums">
                           {currentWeightedRate.toFixed(2)}%
                         </span>
-                        <span className="font-display font-bold tabular-nums text-[#2563eb]">
+                        <span className="font-display font-bold tabular-nums text-[#14594a]">
                           {Number(rate).toFixed(2)}%
                         </span>
                       </div>
                     </div>
 
                     <div className="py-3 px-5 flex justify-between items-center">
-                      <span className="text-[#64748b]">Repayment Term</span>
-                      <span className="text-[#334155]">
+                      <span className="text-[#62594e]">Repayment Term</span>
+                      <span className="text-[#3d3630]">
                         {effectiveTermMonths} months ({(effectiveTermMonths / 12).toFixed(1)} yrs)
                       </span>
                     </div>
 
                     <div className="py-3 px-5 flex justify-between items-center">
-                      <span className="text-[#64748b]">Estimated Total Interest</span>
-                      <span className="font-display font-semibold tabular-nums text-[#0f172a]">
+                      <span className="text-[#62594e]">Estimated Total Interest</span>
+                      <span className="font-display font-semibold tabular-nums text-[#231f1b]">
                         {money(result.proposed_total_interest)}
                       </span>
                     </div>
 
                     <div className="py-3 px-5 flex justify-between items-center">
-                      <span className="text-[#64748b]">Origination / Closing Fees</span>
-                      <span className="font-display tabular-nums text-[#334155]">
+                      <span className="text-[#62594e]">Origination / Closing Fees</span>
+                      <span className="font-display tabular-nums text-[#3d3630]">
                         {money(fees)} ({feeTreatment})
                       </span>
                     </div>
 
-                    <div className="py-3.5 px-5 flex justify-between items-center bg-[#f8fafc]">
-                      <span className="font-bold text-[#0f172a]">Total Repayment Outflow</span>
-                      <span className="font-display font-bold tabular-nums text-[#0f172a]">
+                    <div className="py-3.5 px-5 flex justify-between items-center bg-[#f6f1e7]">
+                      <span className="font-bold text-[#231f1b]">Total Repayment Outflow</span>
+                      <span className="font-display font-bold tabular-nums text-[#231f1b]">
                         {money(result.proposed_total_cost)}
                       </span>
                     </div>
@@ -525,19 +532,19 @@ export default function RefinancingPage() {
 
                 {/* Break-even explanation */}
                 {result.break_even_explanation && (
-                  <div className="cp-card p-4 text-xs text-[#334155] space-y-1">
-                    <div className="font-bold flex items-center gap-1.5 text-[#0f172a]">
-                      <Clock className="h-4 w-4 text-[#2563eb]" />
+                  <div className="cp-card p-4 text-xs text-[#3d3630] space-y-1">
+                    <div className="font-bold flex items-center gap-1.5 text-[#231f1b]">
+                      <Clock className="h-4 w-4 text-[#14594a]" />
                       <span>Break-Even Analysis</span>
                     </div>
-                    <p className="leading-relaxed text-[#64748b]">
-                      {result.break_even_explanation}
+                    <p className="leading-relaxed text-[#62594e]">
+                      {localizeAmounts(result.break_even_explanation)}
                     </p>
                   </div>
                 )}
               </>
             ) : (
-              <div className="cp-card p-8 text-center text-sm text-[#64748b]">
+              <div className="cp-card p-8 text-center text-sm text-[#62594e]">
                 Click &ldquo;Calculate Refinance Outcome&rdquo; to model results.
               </div>
             )}

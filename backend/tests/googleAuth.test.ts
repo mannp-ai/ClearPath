@@ -194,4 +194,41 @@ describe('Google OAuth 2.0 / OpenID Connect Authentication', () => {
     expect(res.status).toBe(401);
     expect(res.body.error).toContain('Continue with Google');
   });
+
+  describe('account edge cases', () => {
+    const payload: GoogleUserPayload = { sub: 'sub-edge', email: 'edge@example.com', email_verified: true, name: 'Edge' };
+    const post = () => request(app).post('/api/v1/auth/google/token').send({ credential: 'x' });
+    beforeEach(() => {
+      setCustomTokenVerifier(async () => payload);
+      mocked(RefreshToken.create).mockResolvedValue({});
+    });
+
+    it('drops a pre-registered unverified password when linking Google', async () => {
+      const unverified = { _id: 'u1', email: payload.email, status: 'active', emailVerified: false, passwordHash: 'attacker-hash', sessionVersion: 0, profile: {}, save: jest.fn().mockResolvedValue(true) };
+      mocked(User.findOne).mockResolvedValueOnce(null).mockResolvedValueOnce(unverified);
+      expect((await post()).status).toBe(200);
+      expect(unverified.passwordHash).toBeUndefined();
+      expect(unverified.emailVerified).toBe(true);
+    });
+
+    it('does not create a duplicate user when the Google subject already exists', async () => {
+      mocked(User.findOne).mockResolvedValueOnce({ _id: 'u2', email: payload.email, status: 'active', sessionVersion: 0, profile: { name: 'Edge', picture: undefined } });
+      expect((await post()).status).toBe(200);
+      expect(User.create).not.toHaveBeenCalled();
+    });
+
+    it('reuses the winning user when a concurrent sign-in hits the unique index', async () => {
+      const winner = { _id: 'u3', email: payload.email, status: 'active', sessionVersion: 0, profile: {} };
+      mocked(User.findOne).mockResolvedValueOnce(null).mockResolvedValueOnce(null).mockResolvedValueOnce(winner);
+      mocked(User.create).mockRejectedValue({ code: 11000 });
+      expect((await post()).status).toBe(200);
+      expect(User.findOne).toHaveBeenLastCalledWith({ googleId: payload.sub });
+    });
+
+    it('rejects deactivated accounts without issuing a session', async () => {
+      mocked(User.findOne).mockResolvedValueOnce({ _id: 'u4', status: 'deactivated', profile: {} });
+      expect((await post()).status).toBe(401);
+      expect(RefreshToken.create).not.toHaveBeenCalled();
+    });
+  });
 });

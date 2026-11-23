@@ -14,7 +14,7 @@ import { repaymentRouter } from './routes/repayment';
 const app = express();
 app.use(helmet());
 
-const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
+const corsOrigins = (process.env.CORS_ORIGINS || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000'))
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -38,19 +38,19 @@ app.use(cors({
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
-// Serverless DB connection middleware (ensures warm or cold connection in Vercel serverless)
-app.use(async (_req, _res, next) => {
-  if (process.env.NODE_ENV !== 'test' && process.env.MONGODB_URI) {
-    try {
-      await connectDB();
-    } catch (err) {
-      console.error('Failed to establish database connection in request middleware', err);
-    }
-  }
-  next();
-});
-
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
+
+// Serverless DB connection middleware (reuses the cached connection; 503 if unavailable)
+app.use(async (_req, res, next) => {
+  if (process.env.NODE_ENV === 'test') return next();
+  try {
+    await connectDB();
+    return next();
+  } catch (err) {
+    console.error('Database unavailable', err);
+    return res.status(503).json({ error: 'Service temporarily unavailable' });
+  }
+});
 app.use('/api/v1', authRouter);
 app.use('/api', authRouter);
 app.use('/api/v1', adminRouter);
@@ -83,7 +83,7 @@ if (require.main === module) {
   connectDB().then(async () => {
     await ensureIndexes();
     app.listen(port, () => console.log(`ClearPath backend on ${port}`));
-  });
+  }).catch(() => process.exit(1));
 }
 
 export default app;

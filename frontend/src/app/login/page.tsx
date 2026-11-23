@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -62,20 +62,20 @@ function LoginForm() {
       {/* Auth Card */}
       <div className="cp-card p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-1">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#0f172a] text-white shadow-xs mb-3">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#14594a] text-white shadow-xs mb-3">
             <Lock className="h-5 w-5" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-[#0f172a]">
+          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
             Welcome back
           </h1>
-          <p className="text-xs sm:text-sm text-[#64748b]">
+          <p className="text-xs sm:text-sm text-[#62594e]">
             Sign in to access your saved loans and repayment scenarios.
           </p>
         </div>
 
         {rawRedirect && (
-          <div className="animate-fade-in rounded-lg bg-[#eff6ff] border border-[#bfdbfe] p-3 text-xs text-[#1e40af] flex items-center gap-2">
-            <Info className="h-4 w-4 shrink-0 text-[#2563eb]" />
+          <div className="animate-fade-in rounded-lg bg-[#e6f0e9] border border-[#bcd8c9] p-3 text-xs text-[#0b3a30] flex items-center gap-2">
+            <Info className="h-4 w-4 shrink-0 text-[#14594a]" />
             <span>Please sign in to access that protected page.</span>
           </div>
         )}
@@ -93,9 +93,9 @@ function LoginForm() {
         {error && (
           <div
             role="alert"
-            className="animate-fade-in flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#dc2626]"
+            className="animate-fade-in flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#b91c1c]"
           >
-            <AlertCircle className="h-4 w-4 shrink-0 text-[#dc2626] mt-0.5" />
+            <AlertCircle className="h-4 w-4 shrink-0 text-[#b91c1c] mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -105,7 +105,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="interactive-tap w-full flex items-center justify-center gap-3 rounded-lg border border-[#e2e8f0] bg-white px-4 py-2.5 text-sm font-medium text-[#0f172a] shadow-xs hover:bg-[#f8fafc] hover:border-[#cbd5e1] transition-all"
+            className="interactive-tap w-full flex items-center justify-center gap-3 rounded-lg border border-[#e4dccb] bg-[#fffdf8] px-4 py-2.5 text-sm font-medium text-[#231f1b] shadow-xs hover:bg-[#f6f1e7] hover:border-[#d6ccb8] transition-all"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
               <path
@@ -130,20 +130,20 @@ function LoginForm() {
         </div>
 
         <div className="relative flex items-center justify-center">
-          <div className="border-t border-[#e2e8f0] w-full" />
-          <span className="bg-white px-3 text-xs text-[#94a3b8] absolute">or continue with email</span>
+          <div className="border-t border-[#e4dccb] w-full" />
+          <span className="bg-[#fffdf8] px-3 text-xs text-[#62594e] absolute">or continue with email</span>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label
               htmlFor="email-input"
-              className="block text-xs font-medium text-[#475569] mb-1.5"
+              className="block text-xs font-medium text-[#4a4239] mb-1.5"
             >
               Email address
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-[#94a3b8]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
                 <Mail className="h-4 w-4" />
               </span>
               <input
@@ -163,20 +163,20 @@ function LoginForm() {
             <div className="flex items-center justify-between mb-1.5">
               <label
                 htmlFor="password-input"
-                className="text-xs font-medium text-[#475569]"
+                className="text-xs font-medium text-[#4a4239]"
               >
                 Password
               </label>
               <Link
                 href="/reset-password"
-                className="text-xs text-[#2563eb] hover:underline"
+                className="py-2 -my-2 text-sm text-[#0f4a3d] hover:underline"
               >
                 Forgot password?
               </Link>
             </div>
 
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-[#94a3b8]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
                 <Lock className="h-4 w-4" />
               </span>
               <input
@@ -192,7 +192,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="interactive-tap absolute right-3 top-2.5 text-[#94a3b8] hover:text-[#334155] p-0.5 rounded"
+                className="interactive-tap absolute right-1 top-1/2 -translate-y-1/2 text-[#62594e] hover:text-[#3d3630] p-2 rounded"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -219,11 +219,11 @@ function LoginForm() {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-[#f1f5f9] text-center text-xs text-[#64748b]">
+        <div className="pt-4 border-t border-[#efe8d8] text-center text-xs text-[#62594e]">
           Don&apos;t have an account yet?{' '}
           <Link
             href={rawRedirect ? `/register?redirect=${encodeURIComponent(safeRedirect)}` : '/register'}
-            className="font-semibold text-[#2563eb] hover:underline"
+            className="font-semibold text-[#14594a] hover:underline"
           >
             Create free account
           </Link>
@@ -236,7 +236,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
-      <Suspense fallback={<div className="cp-card p-8 text-center text-sm text-[#64748b]">Loading login…</div>}>
+      <Suspense fallback={<div className="cp-card p-8 text-center text-sm text-[#62594e]">Loading login…</div>}>
         <LoginForm />
       </Suspense>
     </main>

@@ -20,7 +20,8 @@ export function maskMongoUri(uri: string): string {
 }
 
 export async function connectDB(customUri?: string): Promise<typeof mongoose> {
-  const uri = customUri || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/clearpath';
+  const uri = customUri || process.env.MONGODB_URI;
+  if (!uri) throw new Error('MONGODB_URI must be configured');
 
   if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
