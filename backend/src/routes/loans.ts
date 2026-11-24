@@ -17,6 +17,9 @@ const loanSchema = z.object({
   minimum_payment: z.number().positive().max(1000000),
 });
 const mongoId = /^[a-f\d]{24}$/i;
+// Same ceiling the repayment and refinancing calculators already enforce; stops one account storing unbounded data.
+const MAX_LOANS = 50;
+const LIMIT_ERROR = { error: `You can store at most ${MAX_LOANS} loans` };
 
 router.get('/loans', authMiddleware, asyncHandler(async (req, res) => {
   const loans = await Loan.find({ userId: req.user!.id }).sort({ createdAt: 1 });
@@ -26,6 +29,7 @@ router.get('/loans', authMiddleware, asyncHandler(async (req, res) => {
 router.post('/loans', authMiddleware, asyncHandler(async (req, res) => {
   const parsed = loanSchema.safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ error: 'Validation failed', details: parsed.error.flatten() });
+  if (await Loan.countDocuments({ userId: req.user!.id }) >= MAX_LOANS) return res.status(409).json(LIMIT_ERROR);
   const loan = await Loan.create({ ...parsed.data, userId: req.user!.id });
   return res.status(201).json({ loan });
 }));
@@ -40,7 +44,7 @@ router.put('/loans/:id', authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 router.post('/loans/import', authMiddleware, asyncHandler(async (req, res) => {
-  const items = z.array(loanSchema).safeParse(req.body?.loans);
+  const items = z.array(loanSchema).max(MAX_LOANS).safeParse(req.body?.loans);
   if (!items.success) return res.status(422).json({ error: 'Validation failed', details: items.error.flatten() });
   const created = [];
   for (const l of items.data) {
@@ -53,6 +57,7 @@ router.post('/loans/import', authMiddleware, asyncHandler(async (req, res) => {
       minimum_payment: l.minimum_payment,
     });
     if (exists) continue;
+    if (await Loan.countDocuments({ userId: req.user!.id }) >= MAX_LOANS) return res.status(409).json(LIMIT_ERROR);
     created.push(await Loan.create({ ...l, userId: req.user!.id }));
   }
   return res.status(201).json({ imported: created.length, loans: created });

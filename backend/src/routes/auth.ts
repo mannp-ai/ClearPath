@@ -28,6 +28,8 @@ import { isIsoCurrency } from '../utils/currency';
 import { requireUrl } from '../config/urls';
 
 const router = Router();
+// bcrypt hash of a random throwaway string (cost 12), only used to equalise login timing.
+const DUMMY_HASH = '$2a$12$Ji3XLOg4Y2oe1axlOAoUS.ssgGQvfcJz8Weyv3KlO6FtFgzXA9/su';
 const ACCESS_TOKEN_MS = 15 * 60 * 1000;
 const REFRESH_TOKEN_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -148,6 +150,8 @@ router.post('/auth/login', authLimiter, asyncHandler(async (req, res) => {
   if (!parsed.success) return res.status(422).json({ error: 'Validation failed', details: parsed.error.flatten() });
   const { email, password } = parsed.data;
   const user = await User.findOne({ email });
+  // Always run one bcrypt compare so response time does not reveal whether the email is registered.
+  const ok = await verifyPassword(password, user?.passwordHash || DUMMY_HASH);
   if (!user || user.status !== 'active') {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
@@ -156,11 +160,9 @@ router.post('/auth/login', authLimiter, asyncHandler(async (req, res) => {
       error: 'This account was created with Google sign-in. Please use Continue with Google.',
     });
   }
-  if (!user.emailVerified) {
+  if (!user.emailVerified || !ok) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-  const ok = await verifyPassword(password, user.passwordHash);
-  if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
   const refresh = newToken();
   await RefreshToken.create({
     userId: user._id,

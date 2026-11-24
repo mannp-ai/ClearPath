@@ -83,6 +83,7 @@ describe('per-loan currency', () => {
   });
   it('stores the loan currency on create and rejects unsupported ones', async () => {
     const create = jest.spyOn(Loan, 'create').mockResolvedValue({ _id: 'x' } as never);
+    jest.spyOn(Loan, 'countDocuments').mockResolvedValue(0 as never);
     const body = { name: 'Rupee loan', type: 'Private', balance: 500000, interest_rate: 9, minimum_payment: 8000, currency: 'INR' };
     expect((await request(app).post('/api/v1/loans').set(auth()).send(body)).status).toBe(201);
     expect(create).toHaveBeenCalledWith(expect.objectContaining({ currency: 'INR', balance: 500000 }));

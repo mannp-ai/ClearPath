@@ -3,6 +3,7 @@ import express from 'express';
 import { connectDB, ensureIndexes } from './config/db';
 import helmet from 'helmet';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/auth';
 import { adminRouter } from './routes/admin';
@@ -44,6 +45,12 @@ app.use(cookieParser());
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
 
+// Broad per-IP ceiling for every API route (auth routes also have their own, stricter limit).
+// shortcut: in-memory counter, so it is per instance; move to a shared store if the backend scales out.
+if (process.env.NODE_ENV !== 'test') {
+  app.use('/api', rateLimit({ windowMs: 60 * 1000, max: 300, standardHeaders: true, legacyHeaders: false }));
+}
+
 // Serverless DB connection middleware (reuses the cached connection; 503 if unavailable)
 app.use(async (_req, res, next) => {
   if (process.env.NODE_ENV === 'test') return next();
@@ -69,6 +76,8 @@ app.use('/api', refinancingRouter);
 app.use('/api', repaymentRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err?.type === 'entity.parse.failed') return res.status(400).json({ error: 'Malformed JSON body' });
+  if (err?.type === 'entity.too.large') return res.status(413).json({ error: 'Request body too large' });
   if (err?.message?.includes('CORS')) {
     return res.status(403).json({ error: err.message });
   }
