@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { requireUrl } from '../config/urls';
 
 export type MailProviderType = 'gmail_oauth2' | 'smtp' | 'test';
@@ -13,7 +13,7 @@ function getProvider(): MailProviderType {
   return 'smtp';
 }
 
-function createTransport(): nodemailer.Transporter {
+function createTransport(): Transporter {
   const provider = getProvider();
 
   if (provider === 'gmail_oauth2') {

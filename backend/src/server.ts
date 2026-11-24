@@ -12,6 +12,10 @@ import { refinancingRouter } from './routes/refinancing';
 import { repaymentRouter } from './routes/repayment';
 
 const app = express();
+// Behind Render/Vercel's proxy every request would otherwise share the proxy IP, so the auth rate limit
+// would lock out all users together (and express-rate-limit logs ERR_ERL_UNEXPECTED_X_FORWARDED_FOR).
+// TRUST_PROXY_HOPS=2 when the Vercel rewrite proxy sits in front of Render (client -> Vercel -> Render).
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS) || 1);
 app.use(helmet());
 
 const corsOrigins = (process.env.CORS_ORIGINS || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000'))

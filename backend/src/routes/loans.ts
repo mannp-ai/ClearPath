@@ -7,9 +7,10 @@ import { isIsoCurrency } from '../utils/currency';
 
 const router = Router();
 
+const loanType = z.enum(['Federal', 'Private', 'Unknown']);
 const loanSchema = z.object({
   name: z.string().min(1).max(100),
-  type: z.enum(['Federal', 'Private', 'Unknown']).default('Unknown'),
+  type: loanType.default('Unknown'),
   currency: z.string().refine(isIsoCurrency, 'Unsupported currency').optional(),
   balance: z.number().positive().max(10000000),
   interest_rate: z.number().min(0).max(100),
@@ -31,7 +32,7 @@ router.post('/loans', authMiddleware, asyncHandler(async (req, res) => {
 
 router.put('/loans/:id', authMiddleware, asyncHandler(async (req, res) => {
   if (!mongoId.test(req.params.id)) return res.status(404).json({ error: 'Not found' });
-  const parsed = loanSchema.partial().safeParse(req.body);
+  const parsed = loanSchema.extend({ type: loanType }).partial().safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ error: 'Validation failed', details: parsed.error.flatten() });
   const loan = await Loan.findOneAndUpdate({ _id: req.params.id, userId: req.user!.id }, parsed.data, { new: true });
   if (!loan) return res.status(404).json({ error: 'Not found' });

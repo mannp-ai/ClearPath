@@ -1,17 +1,17 @@
 import Link from 'next/link';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Bookmark, Percent, Scale, ShieldCheck, Wallet } from 'lucide-react';
 
 export default function Home() {
   return (
     <main className="flex-1 bg-[#f6f1e7]">
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden border-b border-[#e4dccb] bg-[#f6f1e7] pt-16 pb-20 sm:pt-24 sm:pb-28">
-        <div aria-hidden="true" className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-[#f4b942] opacity-40" />
-        <div aria-hidden="true" className="pointer-events-none absolute -left-16 bottom-8 h-32 w-32 rounded-full bg-[#e8553d] opacity-20" />
+        <div aria-hidden="true" className="cp-disc pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-[#f4b942]" style={{ ["--cp-disc-opacity" as string]: 0.4 }} />
+        <div aria-hidden="true" className="cp-disc pointer-events-none absolute -left-16 bottom-8 h-32 w-32 rounded-full bg-[#e8553d] animation-delay-150" style={{ ["--cp-disc-opacity" as string]: 0.2 }} />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6 animate-fade-up">
-              <p className="text-sm font-medium uppercase tracking-widest text-[#14594a]">
+              <p className="text-base font-semibold text-[#14594a]">
                 Student loan decision support
               </p>
               <h1 className="font-head text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-[-0.04em] text-[#231f1b]">
@@ -33,7 +33,7 @@ export default function Home() {
 
             {/* What the tools produce: descriptive only, no sample figures */}
             <div className="lg:col-span-5 animate-fade-up animation-delay-150">
-              <div className="rounded-2xl bg-[#12332b] p-6 sm:p-8 space-y-5">
+              <div className="rounded-2xl bg-[#12332b] p-6 sm:p-8 space-y-5 shadow-[8px_8px_0_0_#f4b942]">
                 <h2 className="text-sm font-semibold uppercase tracking-widest text-[#f4b942]">Your results show</h2>
                 <ul className="space-y-4 text-base text-[#e4dccb]">
                   <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Months to debt-free under minimum payments, Avalanche and Snowball</span></li>
@@ -63,8 +63,11 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Feature 1 */}
-            <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#14594a]">01</span>
+            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#e6f0e9', color: '#14594a' }}>
+                <Wallet className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Feature 01</span>
+              </span>
               <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Multi-Loan Portfolio Consolidation
               </h3>
@@ -78,8 +81,11 @@ export default function Home() {
             </div>
 
             {/* Feature 2 */}
-            <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#14594a]">02</span>
+            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#fbe7b8', color: '#7a5200' }}>
+                <Scale className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Feature 02</span>
+              </span>
               <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Avalanche vs. Snowball Comparison
               </h3>
@@ -93,8 +99,11 @@ export default function Home() {
             </div>
 
             {/* Feature 3 */}
-            <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#14594a]">03</span>
+            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#fbd9d2', color: '#a3321f' }}>
+                <Percent className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Feature 03</span>
+              </span>
               <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Hypothetical Refinancing Evaluator
               </h3>
@@ -108,8 +117,11 @@ export default function Home() {
             </div>
 
             {/* Feature 4 */}
-            <div className="cp-card p-6 sm:p-7 space-y-3">
-              <span className="font-mono text-xs font-medium text-[#14594a]">04</span>
+            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#e6f0e9', color: '#14594a' }}>
+                <Bookmark className="h-5 w-5" aria-hidden="true" />
+                <span className="sr-only">Feature 04</span>
+              </span>
               <h3 className="font-display text-lg font-bold text-[#231f1b]">
                 Saved Scenarios & Modeling Archives
               </h3>
@@ -139,7 +151,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 1</div>
+              <div className="cp-step-chip" aria-label="Step 1">1</div>
               <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Create your account
               </h3>
@@ -149,7 +161,7 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 2</div>
+              <div className="cp-step-chip" aria-label="Step 2">2</div>
               <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Enter your student loans
               </h3>
@@ -159,7 +171,7 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              <div className="text-xs font-mono font-semibold text-[#14594a]">Step 3</div>
+              <div className="cp-step-chip" aria-label="Step 3">3</div>
               <h3 className="font-display text-base font-bold text-[#231f1b]">
                 Compare strategies & explore refinancing
               </h3>
@@ -190,18 +202,18 @@ export default function Home() {
       </section>
 
       {/* 5. Final Call to Action */}
-      <section className="py-20 bg-[#fffdf8] text-center">
+      <section className="py-20 bg-[#12332b] text-center">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 space-y-5">
-          <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
+          <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#fffdf8]">
             Your next step towards a clearer repayment plan.
           </h2>
-          <p className="text-sm sm:text-base text-[#62594e]">
+          <p className="text-sm sm:text-base text-[#d6ccb8]">
             Create a free account to organize your loans and start modeling accelerated payoff strategies today.
           </p>
           <div className="pt-2">
             <Link
               href="/register"
-              className="cp-btn-primary text-sm px-6 py-3"
+              className="cp-btn-primary text-sm px-6 py-3 !bg-[#f4b942] !text-[#231f1b] hover:!bg-[#fffdf8]"
             >
               <span>Get started</span>
               <ArrowRight className="h-4 w-4" />

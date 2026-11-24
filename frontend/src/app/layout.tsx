@@ -39,8 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/loans" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Portfolio</Link>
               <Link href="/repayment" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Repayment Strategies</Link>
               <Link href="/refinancing" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Refinancing</Link>
-              <Link href="/login" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Sign in</Link>
-              <Link href="/register" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Create account</Link>
             </div>
           </div>
         </footer>

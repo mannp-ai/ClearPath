@@ -75,8 +75,18 @@ h1, h2, h3, h4, h5, h6, .font-display {
 /* Clean, high-precision card surfaces */
 .cp-card {
   background-color: #fffdf8;
-  border: 1px solid #dde3ec;
+  border: 1px solid #e4dccb;
   border-radius: 1rem;
+}
+
+/* Hover-lift for cards that sit in a grid: chunky offset shadow in the brand green */
+.cp-card-lift {
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, border-color 180ms ease;
+}
+.cp-card-lift:hover {
+  transform: translateY(-3px);
+  border-color: #14594a;
+  box-shadow: 4px 4px 0 0 #14594a;
 }
 
 .cp-card-interactive {
@@ -90,6 +100,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 .cp-card-interactive:hover {
   border-color: #d6ccb8;
   box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  transform: translateY(-2px);
 }
 
 /* Form inputs */
@@ -109,7 +120,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 .cp-input:focus {
   outline: none;
   border-color: #14594a;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(20, 89, 74, 0.18);
 }
 
 .cp-input::placeholder {
@@ -137,6 +148,9 @@ h1, h2, h3, h4, h5, h6, .font-display {
   background-color: #f4b942;
   color: #231f1b;
 }
+
+.cp-btn-primary svg { transition: transform 160ms ease; }
+.cp-btn-primary:hover:not(:disabled) svg { transform: translateX(3px); }
 
 .cp-btn-primary:active:not(:disabled) {
   transform: scale(0.985);
@@ -302,3 +316,27 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 
 .font-head { font-family: var(--font-head); letter-spacing: -0.03em; }
+
+/* Page-to-page transition (app/template.tsx re-mounts on every navigation) */
+.cp-page-enter { animation: cp-fade-up 280ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Decorative hero discs settle in once, then rest */
+@keyframes cp-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: var(--cp-disc-opacity, 0.4); transform: scale(1); }
+}
+.cp-disc { animation: cp-pop 700ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Numbered step chip with a connector to the next step (desktop) */
+.cp-step-chip {
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #14594a;
+  color: #fffdf8;
+  font-family: var(--font-head);
+  font-weight: 700;
+}

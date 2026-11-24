@@ -285,7 +285,8 @@ router.post('/auth/google/token', authLimiter, asyncHandler(async (req, res) => 
 // Session Refresh, Logout, and Recovery
 // ==========================================
 
-router.post('/auth/refresh', authLimiter, asyncHandler(async (req, res) => {
+// Not rate limited: logged-out page loads call this, and sharing authLimiter would lock people out of login.
+router.post('/auth/refresh', asyncHandler(async (req, res) => {
   const refresh = req.cookies?.refresh_token;
   if (!refresh) {
     clearSession(res);
