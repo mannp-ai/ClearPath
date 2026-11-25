@@ -3,310 +3,212 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Menu, X, ShieldCheck, LogOut, User as UserIcon, ArrowRight } from 'lucide-react';
-import {
-  fetchCurrentUser,
-  getApiErrorMessage,
-  logout,
-  type SessionUser,
-} from '@/lib/api';
+import { Menu, X, ShieldCheck, LogOut, LayoutGrid, Layers, ChartColumn, RefreshCw, Settings } from 'lucide-react';
+import { fetchCurrentUser, getApiErrorMessage, logout, type SessionUser } from '@/lib/api';
+import { Logo } from '@/components/logo';
+
+// Routes behind the route guard get the sidebar shell; everything else gets the public header.
+const APP_ROUTES = ['/overview', '/loans', '/repayment', '/refinancing', '/settings', '/admin'];
+
+const APP_LINKS = [
+  { href: '/overview', label: 'Overview', icon: LayoutGrid },
+  { href: '/loans', label: 'Loans', icon: Layers },
+  { href: '/repayment', label: 'Repayment', icon: ChartColumn },
+  { href: '/refinancing', label: 'Refinance', icon: RefreshCw },
+];
+
+// Account-level pages sit apart from the everyday tasks, next to who is signed in.
+const SETTINGS_LINK = { href: '/settings', label: 'Settings', icon: Settings };
+const ADMIN_LINK = { href: '/admin', label: 'Admin', icon: ShieldCheck };
+
+const PUBLIC_LINKS = [
+  { href: '/#features', label: 'What you get' },
+  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/#questions', label: 'Questions' },
+];
 
 export default function Navigation() {
   const [user, setUser] = useState<SessionUser | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [loading, setLoading] = useState(true);
+  // Remembering the path the menu was opened on closes it on every navigation.
+  const [openOn, setOpenOn] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const open = openOn === pathname;
+  const isApp = APP_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   useEffect(() => {
     let active = true;
     fetchCurrentUser()
       .then((currentUser) => {
-        if (active) {
-          setUser(currentUser);
-          setStatus('ready');
-        }
+        if (active) setUser(currentUser);
       })
-      .catch((loadError: unknown) => {
-        if (!active) return;
-        if (typeof loadError === 'object' && loadError !== null && 'response' in loadError) {
-          const response = loadError.response;
-          if (typeof response === 'object' && response !== null && 'status' in response && response.status === 401) {
-            setStatus('ready');
-            return;
-          }
-        }
-        setStatus('error');
+      .catch(() => {})
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
-  }, []);
+  }, [pathname]);
 
+  // Marks the header link for the section being read on the landing page.
+  const [section, setSection] = useState('');
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 8);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (pathname !== '/') return;
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => {
+        if (entry.isIntersecting) setSection(entry.target.id);
+        else setSection((current) => (current === entry.target.id ? '' : current));
+      }),
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    PUBLIC_LINKS.forEach((link) => {
+      const target = document.getElementById(link.href.slice(2));
+      if (target) observer.observe(target);
+    });
+    return () => observer.disconnect();
+  }, [pathname]);
 
   const signOut = async () => {
     try {
       await logout();
       setUser(null);
-      setMobileMenuOpen(false);
+      setOpenOn(null);
       router.push('/');
     } catch (logoutError: unknown) {
       console.error(getApiErrorMessage(logoutError));
     }
   };
 
-  const authenticatedLinks = [
-    { href: '/loans', label: 'Portfolio' },
-    { href: '/repayment', label: 'Repayment Strategies' },
-    { href: '/refinancing', label: 'Refinancing' },
-    { href: '/settings', label: 'Settings' },
-  ];
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+  const accountLinks = isAdmin ? [SETTINGS_LINK, ADMIN_LINK] : [SETTINGS_LINK];
 
-  const unauthenticatedLinks = [
-    { href: '/#features', label: 'Features' },
-    { href: '/#how-it-works', label: 'How it works' },
-  ];
+  const menuButton = (
+    <button
+      type="button"
+      onClick={() => setOpenOn(open ? null : pathname)}
+      className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white hover:bg-white/10"
+      aria-expanded={open}
+      aria-label="Toggle navigation menu"
+    >
+      {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+    </button>
+  );
 
-  const isAdmin = user && (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
+  const linkList = (links: typeof APP_LINKS) => (
+    <ul className="space-y-0.5">
+      {links.map(({ href, label, icon: Icon }) => {
+        const active = pathname.startsWith(href);
+        return (
+          <li key={href}>
+            <Link
+              href={href}
+              onClick={() => setOpenOn(null)}
+              aria-current={active ? 'page' : undefined}
+              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm lg:min-h-10 ${
+                active ? 'bg-[#d8f2a7] font-semibold text-[#0b0f1a]' : 'font-medium text-[#c9d8d1] hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.25 : 1.75} aria-hidden="true" />
+              {label}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
-  const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
-    if (href.startsWith('/#')) return false;
-    return pathname.startsWith(href);
-  };
+  const account = (
+    <div className="space-y-3">
+      {linkList(accountLinks)}
+      <div className="flex items-center gap-2.5 border-t border-white/15 pl-1 pt-3">
+        <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-[#d8f2a7]">
+          {user?.email.charAt(0).toUpperCase()}
+        </span>
+        <p className="min-w-0 flex-1 leading-tight">
+          <span className="block text-xs text-[#9fb5ab]">Signed in as</span>
+          <span className="block truncate text-sm font-medium text-white" title={user?.email}>
+            {user?.email.split('@')[0]}
+          </span>
+        </p>
+        <button type="button" onClick={signOut} aria-label="Log out" title="Log out" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-[#c9d8d1] hover:bg-white/10 hover:text-white">
+          <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+
+  if (isApp) {
+    return (
+      <>
+        <aside className="cp-sidebar fixed inset-y-0 left-0 z-40 hidden w-60 flex-col gap-6 overflow-y-auto bg-[#0f3d32] px-3 py-5 lg:flex">
+          <Link href="/" aria-label="ClearPath home" className="px-3 text-white">
+            <Logo />
+          </Link>
+          <nav aria-label="Main" className="flex-1">
+            {linkList(APP_LINKS)}
+          </nav>
+          {account}
+        </aside>
+        <header className="sticky top-0 z-40 bg-[#0f3d32] lg:hidden">
+          <div className="flex h-14 items-center justify-between px-4">
+            <Link href="/" aria-label="ClearPath home" className="text-white">
+              <Logo />
+            </Link>
+            {menuButton}
+          </div>
+          {open && (
+            <div className="space-y-6 border-t border-white/15 px-3 pb-4 pt-3">
+              <nav aria-label="Mobile">{linkList(APP_LINKS)}</nav>
+              {account}
+            </div>
+          )}
+        </header>
+      </>
+    );
+  }
+
+  const signedIn = (
+    <Link href="/overview" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#d8f2a7] px-4 text-sm font-semibold text-[#0b0f1a] hover:bg-[#e8f9c8]">
+      Open ClearPath
+    </Link>
+  );
+  const signedOut = (
+    <>
+      <Link href="/login" className="inline-flex min-h-11 items-center justify-center rounded-lg px-3 text-sm font-medium text-white hover:bg-white/10">
+        Log in
+      </Link>
+      <Link href="/register" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#d8f2a7] px-4 text-sm font-semibold text-[#0b0f1a] hover:bg-[#e8f9c8]">
+        Check my loans
+      </Link>
+    </>
+  );
+  const publicLinks = PUBLIC_LINKS.map((link) => (
+    <Link key={link.href} href={link.href} onClick={() => setOpenOn(null)} aria-current={pathname === '/' && link.href === `/#${section}` ? 'location' : undefined} className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm text-[#d5ded9] underline-offset-8 hover:text-white aria-[current=location]:text-[#d8f2a7] aria-[current=location]:underline aria-[current=location]:decoration-2">
+      {link.label}
+    </Link>
+  ));
+  const auth = loading ? <span className="h-11 w-24" aria-hidden="true" /> : user ? signedIn : signedOut;
 
   return (
-    <header
-      className={`sticky top-0 z-40 w-full transition-all duration-150 ${
-        scrolled
-          ? 'border-b border-[#d6ccb8] bg-[#fffdf8] shadow-xs'
-          : 'border-b border-[#e4dccb] bg-[#fffdf8]'
-      }`}
-    >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Brand */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-display text-base font-bold tracking-tight text-[#231f1b] hover:opacity-90 active:scale-[0.98] transition-all"
-        >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f4b942] text-[#231f1b]">
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-              <polyline points="16 7 22 7 22 13" />
-            </svg>
-          </span>
-          <span>ClearPath</span>
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0f3d32]">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="text-white">
+          <Logo />
         </Link>
-
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Main">
-          {user ? (
-            <>
-              {authenticatedLinks.map((link) => {
-                const active = isActive(link.href);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    aria-current={active ? 'page' : undefined}
-                    className={`rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                      active
-                        ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
-                        : 'text-[#4a4239] hover:bg-[#f6f1e7] hover:text-[#231f1b]'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className={`flex items-center gap-1.5 rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive('/admin')
-                      ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
-                      : 'text-[#4a4239] hover:bg-[#f6f1e7] hover:text-[#231f1b]'
-                  }`}
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#14594a]" />
-                  <span>Admin</span>
-                </Link>
-              )}
-            </>
-          ) : (
-            <>
-              {unauthenticatedLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#4a4239] hover:text-[#231f1b] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </>
-          )}
+        <nav aria-label="Main" className="hidden items-center md:flex">
+          {publicLinks}
         </nav>
-
-        {/* Desktop Auth Controls */}
-        <div className="hidden md:flex items-center gap-2.5">
-          {status === 'loading' ? (
-            <div className="h-7 w-20 animate-pulse rounded-md bg-[#efe8d8]" />
-          ) : user ? (
-            <div className="flex items-center gap-2.5">
-              <span className="hidden lg:flex items-center gap-1.5 rounded-full border border-[#e4dccb] bg-[#f6f1e7] px-2.5 py-0.5 text-xs font-mono text-[#3d3630]">
-                <UserIcon className="h-3 w-3 text-[#62594e]" />
-                <span className="max-w-[130px] truncate">{user.email}</span>
-              </span>
-              <button
-                type="button"
-                onClick={signOut}
-                className="interactive-tap flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-sm text-[#4a4239] hover:bg-[#fef2f2] hover:text-[#b91c1c]"
-                title="Log out"
-              >
-                <LogOut className="h-3 w-3" />
-                <span>Log out</span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/login"
-                className="interactive-tap rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#4a4239] hover:text-[#231f1b]"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/register"
-                className="interactive-tap inline-flex items-center justify-center rounded-md bg-[#14594a] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4a3d]"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Hamburger Button */}
-        <div className="flex items-center md:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="interactive-tap inline-flex items-center justify-center rounded-md p-2.5 text-[#4a4239] hover:bg-[#efe8d8] hover:text-[#231f1b]"
-            aria-expanded={mobileMenuOpen}
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
+        <div className="hidden items-center gap-2 md:flex">{auth}</div>
+        <div className="md:hidden">{menuButton}</div>
       </div>
-
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="border-b border-[#e4dccb] bg-[#fffdf8] px-4 pt-2 pb-5 md:hidden shadow-md">
-          <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
-            {user ? (
-              <>
-                {authenticatedLinks.map((link) => {
-                  const active = isActive(link.href);
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
-                          : 'text-[#3d3630] hover:bg-[#f6f1e7]'
-                      }`}
-                    >
-                      <span>{link.label}</span>
-                      {active && <span className="h-1.5 w-1.5 rounded-full bg-[#14594a]" />}
-                    </Link>
-                  );
-                })}
-
-                {isAdmin && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                      isActive('/admin')
-                        ? 'bg-[#efe8d8] text-[#231f1b] font-semibold'
-                        : 'text-[#3d3630] hover:bg-[#f6f1e7]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-4 w-4 text-[#14594a]" />
-                      <span>Admin</span>
-                    </div>
-                  </Link>
-                )}
-
-                <div className="mt-3 pt-3 border-t border-[#efe8d8] space-y-2">
-                  <div className="px-3 text-xs text-[#62594e]">
-                    Signed in as <strong className="text-[#231f1b] font-medium">{user.email}</strong>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={signOut}
-                    className="interactive-tap flex w-full items-center gap-2 rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#b91c1c] hover:bg-[#fef2f2]"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Log out</span>
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {unauthenticatedLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between rounded-md whitespace-nowrap px-3 py-2 text-sm font-medium text-[#3d3630] hover:bg-[#f6f1e7] transition-colors"
-                  >
-                    <span>{link.label}</span>
-                  </Link>
-                ))}
-
-                <div className="mt-3 pt-3 border-t border-[#efe8d8] flex flex-col gap-2">
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="interactive-tap flex items-center justify-center rounded-md border border-[#e4dccb] bg-[#fffdf8] px-3 py-2 text-center text-xs font-medium text-[#231f1b] hover:bg-[#f6f1e7]"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="interactive-tap flex items-center justify-center rounded-md bg-[#14594a] px-3 py-2 text-center text-xs font-medium text-white hover:bg-[#0f4a3d]"
-                  >
-                    Get Started
-                  </Link>
-                </div>
-              </>
-            )}
+      {open && (
+        <div className="flex flex-col border-t border-white/10 px-4 pb-4 pt-2 md:hidden">
+          <nav aria-label="Mobile" className="flex flex-col">
+            {publicLinks}
           </nav>
+          <div className="mt-2 flex flex-col gap-2">{auth}</div>
         </div>
       )}
     </header>

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle2, AlertCircle, MailCheck, ArrowRight } from 'lucide-react';
+import { CheckCircle2, AlertCircle, MailCheck } from 'lucide-react';
 import { getApiErrorMessage, verifyEmail } from '@/lib/api';
 
 type VerificationState = { status: 'checking' | 'success' | 'error'; message: string };
@@ -37,17 +37,17 @@ function VerifyEmailContent() {
   return (
     <div className="w-full max-w-md">
       <div className="cp-card p-6 sm:p-8 space-y-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0e9] text-[#14594a] mb-2">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#eef8dc] text-[#0f3d32] mb-2">
           {status === 'success' ? (
             <CheckCircle2 className="h-6 w-6 text-[#0f6b53]" />
           ) : status === 'error' ? (
             <AlertCircle className="h-6 w-6 text-[#b91c1c]" />
           ) : (
-            <MailCheck className="h-6 w-6 text-[#14594a]" />
+            <MailCheck className="h-6 w-6 text-[#0f3d32]" />
           )}
         </div>
 
-        <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
+        <h1 className="font-head text-3xl font-semibold tracking-tight text-[#0b0f1a]">
           Email Verification
         </h1>
 
@@ -58,7 +58,7 @@ function VerifyEmailContent() {
               ? 'border border-[#a7f3d0] bg-[#ecfdf5] text-[#0f6b53]'
               : status === 'error'
               ? 'border border-[#fecaca] bg-[#fef2f2] text-[#b91c1c]'
-              : 'border border-[#e4dccb] bg-[#f6f1e7] text-[#62594e]'
+              : 'border border-[#e5e8ee] bg-[#f3efe7] text-[#55606e]'
           }`}
         >
           {message}
@@ -70,7 +70,6 @@ function VerifyEmailContent() {
             className="cp-btn-primary w-full"
           >
             <span>Continue to Sign In</span>
-            <ArrowRight className="h-4 w-4" />
           </Link>
         )}
 
@@ -92,7 +91,7 @@ export default function VerifyEmailPage() {
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
       <Suspense
         fallback={
-          <div className="cp-card p-8 text-center text-sm text-[#62594e]">
+          <div className="cp-card p-8 text-center text-sm text-[#55606e]">
             Checking verification link…
           </div>
         }

@@ -51,7 +51,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10 space-y-6 animate-fade-in">
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-10 space-y-6">
       <div className="cp-masthead">
         <h1 className="font-head">Settings</h1>
         <p className="mt-1 text-sm">Choose your country and the currency ClearPath uses for new loans and amounts.</p>
@@ -72,7 +72,7 @@ export default function SettingsPage() {
 
       <form onSubmit={onSave} className="cp-card p-5 sm:p-6 space-y-5">
         <div>
-          <label htmlFor="settings-country" className="block text-xs font-medium text-[#4a4239] mb-1.5">Country</label>
+          <label htmlFor="settings-country" className="block text-xs font-medium text-[#2b3140] mb-1.5">Country</label>
           <select id="settings-country" className="cp-input" value={country} onChange={(e) => setCountry(e.target.value)} disabled={!ready}>
             <option value="">Not set</option>
             {countries.map((c) => (
@@ -82,7 +82,7 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label htmlFor="settings-currency" className="block text-xs font-medium text-[#4a4239] mb-1.5">Currency</label>
+          <label htmlFor="settings-currency" className="block text-xs font-medium text-[#2b3140] mb-1.5">Currency</label>
           <select
             id="settings-currency"
             className="cp-input"
@@ -95,11 +95,11 @@ export default function SettingsPage() {
               <option key={c.code} value={c.code}>{c.code} · {c.name}</option>
             ))}
           </select>
-          <p id="settings-currency-help" className="mt-1.5 text-xs text-[#62594e]">
+          <p id="settings-currency-help" className="mt-1.5 text-xs text-[#55606e]">
             Example: {formatMoney(1234567.89, currency, locale)}. Changing this never converts existing loans; each loan keeps its own currency.
           </p>
           {suggested && suggested !== currency && (
-            <button type="button" className="mt-2 py-2 text-sm font-medium text-[#14594a] underline-offset-4 hover:underline" onClick={() => setCurrency(suggested)}>
+            <button type="button" className="mt-2 py-2 text-sm font-medium text-[#0f3d32] underline-offset-4 hover:underline" onClick={() => setCurrency(suggested)}>
               Use {suggested}, the usual currency for this country
             </button>
           )}

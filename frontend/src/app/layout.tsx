@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import Navigation from "./navigation";
+import { Logo } from "@/components/logo";
 import { PreferencesProvider } from "@/lib/preferences";
 import "./globals.css";
 
-const serif = Bricolage_Grotesque({ subsets: ["latin"], weight: ["500","600","700"], variable: "--font-bricolage", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "ClearPath | Independent Student Debt & Repayment Engine",
-  description: "Deterministic student debt modeling. Compare Debt Avalanche and Debt Snowball with exact rollover math, and stress-test refinancing scenarios.",
+  title: "ClearPath | Student loan repayment planning",
+  description: "Put your student loans in one place, compare Avalanche and Snowball repayment, and test a refinance rate. Estimates only. Not a lender.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`h-full antialiased ${serif.variable}`}>
-      <body className="min-h-full flex flex-col bg-[#f6f1e7] text-[#231f1b] antialiased selection:bg-[#e6f0e9] selection:text-[#0f4a3d]">
+    <html lang="en" data-scroll-behavior="smooth" className={`h-full antialiased ${inter.variable} ${fraunces.variable}`}>
+      <body className="min-h-full flex flex-col bg-[#fafbf9] text-[#0b0f1a] antialiased selection:bg-[#d8f2a7] selection:text-[#0b0f1a]">
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <PreferencesProvider>
         <Navigation />
@@ -23,23 +25,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         </PreferencesProvider>
-        <footer className="bg-[#12332b] py-10 text-sm text-[#d6ccb8]">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="space-y-1 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-2 font-display font-semibold text-white">
-                <span>ClearPath</span>
-                <span aria-hidden="true" className="text-[#d6ccb8]">/</span>
-                <span className="text-sm font-normal text-[#d6ccb8]">Debt Modeling Engine</span>
-              </div>
-              <p className="text-[#d6ccb8]">
-                Deterministic student debt calculation tool. Zero lender commissions.
-              </p>
+        <footer className="cp-site-footer bg-[#0b0f1a] py-10 text-sm text-[#c3cad5]">
+          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+            <div className="max-w-md space-y-2">
+              <Logo className="text-white" />
+              <p>Clarity for what&rsquo;s next.</p>
+              <p className="text-[#9aa3af]">ClearPath gives estimates from the figures you enter. It is not a lender, loan servicer or financial adviser.</p>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-5 text-[#e4dccb]">
-              <Link href="/loans" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Portfolio</Link>
-              <Link href="/repayment" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Repayment Strategies</Link>
-              <Link href="/refinancing" className="inline-block py-2 hover:text-white underline-offset-4 hover:underline transition-colors">Refinancing</Link>
-            </div>
+            <nav aria-label="Footer" className="flex flex-wrap gap-x-6">
+              <Link href="/#features" className="inline-flex min-h-11 items-center hover:text-white">What you get</Link>
+              <Link href="/#how-it-works" className="inline-flex min-h-11 items-center hover:text-white">How it works</Link>
+              <Link href="/#questions" className="inline-flex min-h-11 items-center hover:text-white">Questions</Link>
+            </nav>
           </div>
         </footer>
       </body>

@@ -9,7 +9,6 @@ import {
   Trash2,
   AlertCircle,
   Layers,
-  ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
 import {
@@ -24,7 +23,7 @@ import {
 import { useCurrencyOptions, usePreferences } from '@/lib/preferences';
 import { currencySymbol, DEFAULT_CURRENCY, formatMoney, portfolioCurrency } from '@/lib/currency';
 
-const SHARE_COLORS = ['#14594a', '#f4b942', '#e8553d', '#7a3b69', '#2f8f9d', '#b5a98f'];
+const SHARE_COLORS = ['#0f3d32', '#8fbf3f', '#3b82f6', '#0b0f1a', '#2f8f9d', '#9aa3af'];
 
 export default function LoansPage() {
   const [loans, setLoans] = useState<LoanRecord[]>([]);
@@ -170,15 +169,15 @@ export default function LoansPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10 animate-fade-in">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 sm:px-8">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 cp-masthead mb-8">
         <div>
           <h1 className="font-head">
-            Student Loan Portfolio
+            Your loans
           </h1>
-          <p className="mt-1 text-sm text-[#62594e]">
-            Manage your individual student loan accounts to model unified repayment.
+          <p className="mt-1 text-sm text-[#55606e]">
+            Add, edit or remove each student loan.
           </p>
         </div>
 
@@ -188,15 +187,14 @@ export default function LoansPage() {
               href="/repayment"
               className="cp-btn-primary text-xs"
             >
-              <span>Compare Repayment Plans</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>Compare repayment plans</span>
             </Link>
           </div>
         )}
       </div>
 
       {mixed && (
-        <div role="status" className="cp-card mb-8 p-4 text-sm text-[#4a4239]">
+        <div role="status" className="cp-card mb-8 p-4 text-sm text-[#2b3140]">
           <strong className="font-semibold">Your loans use more than one currency.</strong>{' '}
           Each loan is shown in its own currency. ClearPath does not convert currencies, so combined totals, repayment and refinancing comparisons are unavailable until your loans share a currency.
         </div>
@@ -204,55 +202,55 @@ export default function LoansPage() {
 
       {/* Summary KPI Ribbon */}
       {loans.length > 0 && !mixed && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="cp-stats grid grid-cols-2 lg:grid-cols-4 mb-8">
           <div className="cp-card p-4 sm:p-5">
-            <span className="text-xs font-medium text-[#62594e]">
+            <span className="text-xs font-medium text-[#55606e]">
               Total balance
             </span>
-            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#231f1b]">
+            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#0b0f1a]">
               {fmt(totalBalance, pCur)}
             </div>
-            <span className="mt-1 text-xs text-[#62594e]">Across {loans.length} accounts</span>
+            <span className="mt-1 text-xs text-[#55606e]">Across {loans.length} accounts</span>
           </div>
 
           <div className="cp-card p-4 sm:p-5">
-            <span className="text-xs font-medium text-[#62594e]">
-              Combined minimum
+            <span className="text-xs font-medium text-[#55606e]">
+              Minimum payment
             </span>
-            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#231f1b]">
+            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#0b0f1a]">
               {fmt(totalMinPayment, pCur)}
-              <span className="text-xs font-normal text-[#62594e]">/mo</span>
+              <span className="text-xs font-normal text-[#55606e]">/mo</span>
             </div>
-            <span className="mt-1 text-xs text-[#62594e]">Baseline monthly cost</span>
+            <span className="mt-1 text-xs text-[#55606e]">Each month</span>
           </div>
 
           <div className="cp-card p-4 sm:p-5">
-            <span className="text-xs font-medium text-[#62594e]">
-              Weighted APR
+            <span className="text-xs font-medium text-[#55606e]">
+              Average rate
             </span>
-            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#14594a]">
+            <div className="mt-1 font-display text-xl sm:text-2xl font-bold tabular-nums text-[#0f3d32]">
               {weightedAverageRate.toFixed(2)}%
             </div>
-            <span className="mt-1 text-xs text-[#62594e]">Portfolio average</span>
+            <span className="mt-1 text-xs text-[#55606e]">Weighted by balance</span>
           </div>
 
           <div className="cp-card p-4 sm:p-5">
-            <span className="text-xs font-medium text-[#62594e]">
-              Portfolio breakdown
+            <span className="text-xs font-medium text-[#55606e]">
+              Loan types
             </span>
-            <div className="mt-1 flex items-center gap-1.5 font-display text-sm font-semibold text-[#231f1b]">
+            <div className="mt-1 flex items-center gap-1.5 font-display text-sm font-semibold text-[#0b0f1a]">
               {loans.some((l) => l.type === 'Federal') && (
-                <span className="rounded bg-[#e6f0e9] px-2 py-0.5 text-xs font-medium text-[#0f4a3d]">
+                <span className="rounded bg-[#eef8dc] px-2 py-0.5 text-xs font-medium text-[#0a2e25]">
                   Federal
                 </span>
               )}
               {loans.some((l) => l.type === 'Private') && (
-                <span className="rounded bg-[#f6eaf2] px-2 py-0.5 text-xs font-medium text-[#7a3b69]">
+                <span className="rounded bg-[#eaf1fa] px-2 py-0.5 text-xs font-medium text-[#2563a8]">
                   Private
                 </span>
               )}
             </div>
-            <span className="mt-1 text-xs text-[#62594e]">
+            <span className="mt-1 text-xs text-[#55606e]">
               {loans.filter((l) => l.type === 'Federal').length} Federal,{' '}
               {loans.filter((l) => l.type === 'Private').length} Private
             </span>
@@ -262,12 +260,12 @@ export default function LoansPage() {
 
       {/* Balance share by loan (real data only) */}
       {loans.length > 1 && !mixed && totalBalance > 0 && (
-        <section aria-labelledby="balance-share" className="cp-card p-5 sm:p-6 mb-8 animate-fade-up">
-          <h2 id="balance-share" className="font-head text-lg font-semibold text-[#231f1b]">Where your balance sits</h2>
+        <section aria-labelledby="balance-share" className="cp-card p-5 sm:p-6 mb-8">
+          <h2 id="balance-share" className="font-head text-lg font-semibold text-[#0b0f1a]">Where your balance sits</h2>
           <div
             role="img"
             aria-label={loans.map((l) => `${l.name}: ${Math.round((l.balance / totalBalance) * 100)}%`).join(', ')}
-            className="mt-4 flex h-4 overflow-hidden rounded-full bg-[#efe8d8]"
+            className="mt-4 flex h-4 overflow-hidden rounded-full bg-[#eef0ec]"
           >
             {loans.map((l, i) => (
               <span
@@ -281,8 +279,8 @@ export default function LoansPage() {
             {loans.map((l, i) => (
               <li key={l._id} className="flex min-w-0 items-center gap-2">
                 <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: SHARE_COLORS[i % SHARE_COLORS.length] }} aria-hidden="true" />
-                <span className="truncate text-[#3d3630]">{l.name}</span>
-                <span className="ml-auto font-medium tabular-nums text-[#231f1b]">{Math.round((l.balance / totalBalance) * 100)}%</span>
+                <span className="truncate text-[#2b3140]">{l.name}</span>
+                <span className="ml-auto font-medium tabular-nums text-[#0b0f1a]">{Math.round((l.balance / totalBalance) * 100)}%</span>
               </li>
             ))}
           </ul>
@@ -293,7 +291,7 @@ export default function LoansPage() {
       {error && (
         <div
           role="alert"
-          className="animate-fade-in mb-6 flex items-start gap-3 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-sm text-[#b91c1c]"
+          className=" mb-6 flex items-start gap-3 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-4 text-sm text-[#b91c1c]"
         >
           <AlertCircle className="h-5 w-5 shrink-0 text-[#b91c1c] mt-0.5" />
           <div>
@@ -306,7 +304,7 @@ export default function LoansPage() {
       {successNotice && (
         <div
           role="status"
-          className="animate-fade-in mb-6 flex items-start gap-3 rounded-lg border border-[#a7f3d0] bg-[#ecfdf5] p-4 text-sm text-[#0f6b53]"
+          className=" mb-6 flex items-start gap-3 rounded-lg border border-[#a7f3d0] bg-[#ecfdf5] p-4 text-sm text-[#0f6b53]"
         >
           <CheckCircle2 className="h-5 w-5 shrink-0 text-[#0f6b53] mt-0.5" />
           <span>{successNotice}</span>
@@ -314,14 +312,15 @@ export default function LoansPage() {
       )}
 
       {/* Add / Edit Form Card */}
-      <section className="cp-card p-5 sm:p-6 mb-10">
-        <div className="flex items-center justify-between pb-4 border-b border-[#efe8d8] mb-5">
-          <h2 className="font-display text-base font-bold text-[#231f1b]">
-            {editingId ? 'Edit Loan Account' : 'Add a Loan Account'}
+      {/* With loans on file the list comes first; editing brings the form back up. */}
+      <section className={`cp-card p-5 sm:p-6 mb-10 ${loans.length > 0 && !editingId ? 'order-last mt-6' : ''}`}>
+        <div className="flex items-center justify-between pb-4 border-b border-[#eef0ec] mb-5">
+          <h2 className="font-display text-base font-bold text-[#0b0f1a]">
+            {editingId ? 'Edit loan' : 'Add a loan'}
           </h2>
           {editingId && (
             <span className="rounded-full bg-[#fffbeb] px-2.5 py-0.5 text-xs font-medium text-[#b45309]">
-              Editing Mode
+              Editing
             </span>
           )}
         </div>
@@ -330,7 +329,7 @@ export default function LoansPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
             {/* Field: Name */}
             <div className="lg:col-span-2">
-              <label htmlFor="loans-field-1" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-field-1" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Loan name
               </label>
               <input id="loans-field-1"
@@ -345,7 +344,7 @@ export default function LoansPage() {
 
             {/* Field: Type */}
             <div className="lg:col-span-2">
-              <label htmlFor="loans-field-2" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-field-2" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Loan type
               </label>
               <select id="loans-field-2"
@@ -354,14 +353,14 @@ export default function LoansPage() {
                 onChange={(e) => setType(e.target.value as LoanInput['type'])}
               >
                 <option value="Federal">Federal (Direct/PLUS)</option>
-                <option value="Private">Private Lender</option>
+                <option value="Private">Private lender</option>
                 <option value="Unknown">Unknown / Other</option>
               </select>
             </div>
 
             {/* Field: Currency (per loan; never converts amounts) */}
             <div className="lg:col-span-2">
-              <label htmlFor="loans-currency" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-currency" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Loan currency
               </label>
               <select
@@ -376,7 +375,7 @@ export default function LoansPage() {
                 ))}
               </select>
               {editingId && (
-                <p id="loans-currency-note" className="mt-1 text-xs text-[#62594e]">
+                <p id="loans-currency-note" className="mt-1 text-xs text-[#55606e]">
                   Changing currency relabels this loan&apos;s amounts. It does not convert them.
                 </p>
               )}
@@ -384,18 +383,17 @@ export default function LoansPage() {
 
             {/* Field: Balance */}
             <div className="lg:col-span-2">
-              <label htmlFor="loans-field-3" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-field-3" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Current balance ({symbol})
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#62594e] select-none pointer-events-none">{symbol}</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#55606e] select-none pointer-events-none">{symbol}</span>
                 <input id="loans-field-3"
                   className="cp-input pl-[34px] tabular-nums font-mono"
                   type="number"
                   min="0.01"
                   step="0.01"
                   required
-                  placeholder="10,000.00"
                   value={balance}
                   onChange={(e) => setBalance(e.target.value)}
                 />
@@ -404,7 +402,7 @@ export default function LoansPage() {
 
             {/* Field: Rate */}
             <div className="lg:col-span-2">
-              <label htmlFor="loans-field-4" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-field-4" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Annual interest rate (%)
               </label>
               <div className="relative">
@@ -415,28 +413,26 @@ export default function LoansPage() {
                   max="100"
                   step="0.01"
                   required
-                  placeholder="5.50"
                   value={rate}
                   onChange={(e) => setRate(e.target.value)}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#62594e]">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#55606e]">%</span>
               </div>
             </div>
 
             {/* Field: Minimum Payment */}
             <div className="sm:col-span-2 lg:col-span-2">
-              <label htmlFor="loans-field-5" className="block text-xs font-medium text-[#4a4239] mb-1.5">
+              <label htmlFor="loans-field-5" className="block text-xs font-medium text-[#2b3140] mb-1.5">
                 Monthly minimum payment ({symbol})
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#62594e] select-none pointer-events-none">{symbol}</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-[#55606e] select-none pointer-events-none">{symbol}</span>
                 <input id="loans-field-5"
                   className="cp-input pl-[34px] tabular-nums font-mono"
                   type="number"
                   min="0.01"
                   step="0.01"
                   required
-                  placeholder="120.00"
                   value={minPay}
                   onChange={(e) => setMinPay(e.target.value)}
                 />
@@ -456,11 +452,11 @@ export default function LoansPage() {
                     <span>Saving...</span>
                   </span>
                 ) : editingId ? (
-                  <span>Save Changes</span>
+                  <span>Save changes</span>
                 ) : (
                   <>
                     <Plus className="h-4 w-4" />
-                    <span>Add Loan</span>
+                    <span>Add loan</span>
                   </>
                 )}
               </button>
@@ -482,30 +478,30 @@ export default function LoansPage() {
       {/* Loans List Section */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-lg font-bold text-[#231f1b]">
-            Active Loan Accounts ({loans.length})
+          <h2 className="font-display text-lg font-bold text-[#0b0f1a]">
+            Loans on file ({loans.length})
           </h2>
           {loans.length > 0 && (
-            <span className="text-xs text-[#62594e]">
-              Click Edit to modify balance or interest rate
+            <span className="text-xs text-[#55606e]">
+              Use Edit to change a loan
             </span>
           )}
         </div>
 
         {loading ? (
-          <div className="cp-card p-12 text-center text-sm text-[#62594e]">
-            <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#14594a] border-t-transparent mb-3" />
+          <div className="cp-card p-12 text-center text-sm text-[#55606e]">
+            <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#0f3d32] border-t-transparent mb-3" />
             <p>Loading your loans…</p>
           </div>
         ) : loans.length === 0 ? (
           <div className="cp-card p-10 sm:p-14 text-center border-dashed">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#e6f0e9] text-[#14594a] mb-4">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#eef8dc] text-[#0f3d32] mb-4">
               <Layers className="h-6 w-6" />
             </div>
-            <h3 className="font-display text-base font-bold text-[#231f1b]">
+            <h2 className="font-display text-base font-bold text-[#0b0f1a]">
               No loans entered yet
-            </h3>
-            <p className="mt-1 text-sm text-[#62594e] max-w-sm mx-auto">
+            </h2>
+            <p className="mt-1 text-sm text-[#55606e] max-w-sm mx-auto">
               Add your student loan accounts using the form above to begin modeling repayment strategies.
             </p>
           </div>
@@ -516,7 +512,7 @@ export default function LoansPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm" aria-label="Student Loan Accounts">
                   <thead>
-                    <tr className="border-b border-[#e4dccb] bg-[#f6f1e7] text-xs font-medium text-[#4a4239]">
+                    <tr className="border-b border-[#e5e8ee] bg-[#f3efe7] text-xs font-medium text-[#2b3140]">
                       <th scope="col" className="py-3 px-4">Loan account</th>
                       <th scope="col" className="py-3 px-4">Type</th>
                       <th scope="col" className="py-3 px-4 text-right">Outstanding balance</th>
@@ -525,41 +521,41 @@ export default function LoansPage() {
                       <th scope="col" className="py-3 px-4 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#efe8d8]">
+                  <tbody className="divide-y divide-[#eef0ec]">
                     {loans.map((loan) => (
-                      <tr key={loan._id} className="hover:bg-[#f6f1e7] transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-[#231f1b]">
+                      <tr key={loan._id} className="hover:bg-[#f3efe7] transition-colors">
+                        <td className="py-3.5 px-4 font-semibold text-[#0b0f1a]">
                           {loan.name}
                         </td>
                         <td className="py-3.5 px-4">
                           <span
                             className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                               loan.type === 'Federal'
-                                ? 'bg-[#e6f0e9] text-[#0f4a3d]'
+                                ? 'bg-[#eef8dc] text-[#0a2e25]'
                                 : loan.type === 'Private'
-                                ? 'bg-[#f6eaf2] text-[#7a3b69]'
-                                : 'bg-[#efe8d8] text-[#4a4239]'
+                                ? 'bg-[#eaf1fa] text-[#2563a8]'
+                                : 'bg-[#eef0ec] text-[#2b3140]'
                             }`}
                           >
                             {loan.type}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4 text-right font-display font-semibold tabular-nums text-[#231f1b]">
+                        <td className="py-3.5 px-4 text-right font-display font-semibold tabular-nums text-[#0b0f1a]">
                           {fmt(loan.balance, loan.currency)}
                         </td>
-                        <td className="py-3.5 px-4 text-right tabular-nums text-[#3d3630]">
+                        <td className="py-3.5 px-4 text-right tabular-nums text-[#2b3140]">
                           {loan.interest_rate.toFixed(2)}%
                         </td>
-                        <td className="py-3.5 px-4 text-right tabular-nums text-[#3d3630]">
+                        <td className="py-3.5 px-4 text-right tabular-nums text-[#2b3140]">
                           {fmt(loan.minimum_payment, loan.currency)}
-                          <span className="text-xs text-[#62594e]">/mo</span>
+                          <span className="text-xs text-[#55606e]">/mo</span>
                         </td>
                         <td className="py-3.5 px-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button
                               type="button"
                               onClick={() => beginEdit(loan)}
-                              className="interactive-tap inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-medium text-[#14594a] hover:bg-[#e6f0e9]"
+                              className=" inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-medium text-[#0f3d32] hover:bg-[#eef8dc]"
                             >
                               <Pencil className="h-3.5 w-3.5" />
                               <span>Edit</span>
@@ -567,7 +563,7 @@ export default function LoansPage() {
                             <button
                               type="button"
                               onClick={() => remove(loan)}
-                              className="interactive-tap inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-medium text-[#b91c1c] hover:bg-[#fef2f2]"
+                              className=" inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-medium text-[#b91c1c] hover:bg-[#fef2f2]"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                               <span>Delete</span>
@@ -584,19 +580,19 @@ export default function LoansPage() {
             {/* Mobile Stacked Card View (below md) */}
             <div className="grid grid-cols-1 gap-3.5 md:hidden">
               {loans.map((loan) => (
-                <div key={loan._id} className="cp-card-interactive p-4 space-y-3">
+                <div key={loan._id} className="cp-card p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-display font-bold text-base text-[#231f1b]">
+                      <h3 className="font-display font-bold text-base text-[#0b0f1a]">
                         {loan.name}
                       </h3>
                       <span
                         className={`inline-block mt-1 rounded-full px-2 py-0.5 text-xs font-medium ${
                           loan.type === 'Federal'
-                            ? 'bg-[#e6f0e9] text-[#0f4a3d]'
+                            ? 'bg-[#eef8dc] text-[#0a2e25]'
                             : loan.type === 'Private'
-                            ? 'bg-[#f6eaf2] text-[#7a3b69]'
-                            : 'bg-[#efe8d8] text-[#4a4239]'
+                            ? 'bg-[#eaf1fa] text-[#2563a8]'
+                            : 'bg-[#eef0ec] text-[#2b3140]'
                         }`}
                       >
                         {loan.type} Loan
@@ -607,7 +603,7 @@ export default function LoansPage() {
                       <button
                         type="button"
                         onClick={() => beginEdit(loan)}
-                        className="interactive-tap rounded p-1.5 text-[#14594a] hover:bg-[#e6f0e9]"
+                        className=" rounded p-1.5 text-[#0f3d32] hover:bg-[#eef8dc]"
                         title="Edit loan"
                       >
                         <Pencil className="h-4 w-4" />
@@ -615,7 +611,7 @@ export default function LoansPage() {
                       <button
                         type="button"
                         onClick={() => remove(loan)}
-                        className="interactive-tap rounded p-1.5 text-[#b91c1c] hover:bg-[#fef2f2]"
+                        className=" rounded p-1.5 text-[#b91c1c] hover:bg-[#fef2f2]"
                         title="Delete loan"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -623,22 +619,22 @@ export default function LoansPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#efe8d8] text-xs">
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#eef0ec] text-xs">
                     <div>
-                      <span className="text-[#62594e] block">Balance</span>
-                      <strong className="font-display font-semibold tabular-nums text-sm text-[#231f1b]">
+                      <span className="text-[#55606e] block">Balance</span>
+                      <strong className="font-display font-semibold tabular-nums text-sm text-[#0b0f1a]">
                         {fmt(loan.balance, loan.currency)}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#62594e] block">APR</span>
-                      <strong className="font-display font-semibold tabular-nums text-sm text-[#3d3630]">
+                      <span className="text-[#55606e] block">APR</span>
+                      <strong className="font-display font-semibold tabular-nums text-sm text-[#2b3140]">
                         {loan.interest_rate.toFixed(2)}%
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#62594e] block">Min. Due</span>
-                      <strong className="font-display font-semibold tabular-nums text-sm text-[#3d3630]">
+                      <span className="text-[#55606e] block">Min. Due</span>
+                      <strong className="font-display font-semibold tabular-nums text-sm text-[#2b3140]">
                         {fmt(loan.minimum_payment, loan.currency)}
                       </strong>
                     </div>

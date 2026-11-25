@@ -19,41 +19,42 @@
 
 /* 2. ClearPath Design System Tokens */
 @theme inline {
-  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-head: var(--font-bricolage), 'Geist', system-ui, sans-serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-head: var(--font-inter), system-ui, sans-serif;
+  --font-editorial: var(--font-fraunces), Georgia, serif;
   --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Surfaces */
-  --color-surface-canvas: #f6f1e7;
-  --color-surface-panel: #efe8d8;
-  --color-surface-card: #fffdf8;
-  --color-surface-border: #e4dccb;
-  --color-surface-border-subtle: #efe8d8;
+  --color-surface-canvas: #fafbf9;
+  --color-surface-panel: #eef0ec;
+  --color-surface-card: #ffffff;
+  --color-surface-border: #e5e8ee;
+  --color-surface-border-subtle: #eef0ec;
 
   /* Text */
-  --color-text-primary: #231f1b;
-  --color-text-secondary: #3d3630;
-  --color-text-muted: #62594e;
-  --color-text-subtle: #8a8070;
+  --color-text-primary: #0b0f1a;
+  --color-text-secondary: #2b3140;
+  --color-text-muted: #55606e;
+  --color-text-subtle: #667085;
 
   /* Brand Blue */
-  --color-brand: #14594a;
-  --color-brand-hover: #0f4a3d;
-  --color-brand-active: #0b3a30;
-  --color-brand-faint: #e6f0e9;
-  --color-brand-border: #bcd8c9;
+  --color-brand: #0f3d32;
+  --color-brand-hover: #0a2e25;
+  --color-brand-active: #07221b;
+  --color-brand-faint: #eef8dc;
+  --color-brand-border: #c4e58f;
 }
 
 :root {
-  --background: #f6f1e7;
-  --foreground: #231f1b;
+  --background: #fafbf9;
+  --foreground: #0b0f1a;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -74,57 +75,33 @@ h1, h2, h3, h4, h5, h6, .font-display {
 @layer components {
 /* Clean, high-precision card surfaces */
 .cp-card {
-  background-color: #fffdf8;
-  border: 1px solid #e4dccb;
-  border-radius: 1rem;
-}
-
-/* Hover-lift for cards that sit in a grid: chunky offset shadow in the brand green */
-.cp-card-lift {
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, border-color 180ms ease;
-}
-.cp-card-lift:hover {
-  transform: translateY(-3px);
-  border-color: #14594a;
-  box-shadow: 4px 4px 0 0 #14594a;
-}
-
-.cp-card-interactive {
-  background-color: #fffdf8;
-  border: 1px solid #e4dccb;
-  border-radius: 0.625rem;
-  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.03);
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-}
-
-.cp-card-interactive:hover {
-  border-color: #d6ccb8;
-  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
-  transform: translateY(-2px);
+  background-color: #ffffff;
+  border: 1px solid #e5e8ee;
+  border-radius: 0.75rem;
 }
 
 /* Form inputs */
 .cp-input {
   display: block;
   width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid #e4dccb;
-  background-color: #fffdf8;
+  border-radius: 0.5rem;
+  border: 1px solid #8b95a1;
+  background-color: #ffffff;
   min-height: 2.75rem;
   padding: 0.5625rem 0.8125rem;
   font-size: 1rem;
-  color: #231f1b;
+  color: #0b0f1a;
   transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 
 .cp-input:focus {
   outline: none;
-  border-color: #14594a;
+  border-color: #0f3d32;
   box-shadow: 0 0 0 3px rgba(20, 89, 74, 0.18);
 }
 
 .cp-input::placeholder {
-  color: #62594e;
+  color: #55606e;
 }
 
 /* Primary Button */
@@ -133,24 +110,21 @@ h1, h2, h3, h4, h5, h6, .font-display {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 9999px;
-  background-color: #14594a;
+  border-radius: 0.5rem;
+  background-color: #0f3d32;
   min-height: 2.75rem;
   padding: 0.5625rem 1.125rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #fffdf8;
+  color: #ffffff;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   transition: background-color 140ms ease, transform 120ms ease;
 }
 
 .cp-btn-primary:hover:not(:disabled) {
-  background-color: #f4b942;
-  color: #231f1b;
+  background-color: #0a2e25;
 }
 
-.cp-btn-primary svg { transition: transform 160ms ease; }
-.cp-btn-primary:hover:not(:disabled) svg { transform: translateX(3px); }
 
 .cp-btn-primary:active:not(:disabled) {
   transform: scale(0.985);
@@ -158,7 +132,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 .cp-btn-primary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #fffdf8, 0 0 0 4px #14594a;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f3d32;
 }
 
 /* Secondary Button */
@@ -167,20 +141,20 @@ h1, h2, h3, h4, h5, h6, .font-display {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 9999px;
-  border: 1px solid #d6ccb8;
-  background-color: #fffdf8;
+  border-radius: 0.5rem;
+  border: 1px solid #cfd4dc;
+  background-color: #ffffff;
   min-height: 2.75rem;
   padding: 0.5625rem 1.125rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #231f1b;
+  color: #0b0f1a;
   transition: background-color 140ms ease, border-color 140ms ease, transform 120ms ease;
 }
 
 .cp-btn-secondary:hover:not(:disabled) {
-  background-color: #f6f1e7;
-  border-color: #d6ccb8;
+  background-color: #eef8dc;
+  border-color: #cfd4dc;
 }
 
 .cp-btn-secondary:active:not(:disabled) {
@@ -189,57 +163,22 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 .cp-btn-secondary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #fffdf8, 0 0 0 4px #14594a;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f3d32;
 }
 
 }
 
-/* Micro-interaction tap */
-.interactive-tap {
-  transition: transform 120ms ease, background-color 140ms ease, border-color 140ms ease;
-}
+/* Motion: one moment on the landing page; elsewhere only feedback to what the person did. */
+a, button, summary { transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 120ms ease; }
+button:active:not(:disabled), a:active { transform: scale(0.98); }
 
-.interactive-tap:active:not(:disabled) {
-  transform: scale(0.985);
-}
+@keyframes cp-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes cp-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.cp-rise { animation: cp-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.cp-rise-late { animation-delay: 140ms; }
+.cp-draw { animation: cp-draw 1500ms cubic-bezier(0.4, 0, 0.2, 1) 420ms both; }
 
-
-/* =========================================================
-   Animation System — ClearPath Motion Language
-   Principle: One orchestrated entrance. No repeated scroll-trigger.
-   ========================================================= */
-
-@keyframes cp-fade-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes cp-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes cp-scale-in {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.animate-fade-up  { animation: cp-fade-up  320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-fade-in  { animation: cp-fade-in  260ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-scale-in { animation: cp-scale-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-.animation-delay-75  { animation-delay:  75ms; }
-.animation-delay-150 { animation-delay: 150ms; }
-.animation-delay-225 { animation-delay: 225ms; }
-.animation-delay-300 { animation-delay: 300ms; }
-.animation-delay-375 { animation-delay: 375ms; }
-.animation-delay-450 { animation-delay: 450ms; }
-
-/* Spinner */
-@keyframes cp-spin {
-  to { transform: rotate(360deg); }
-}
-.animate-spin-slow { animation: cp-spin 900ms linear infinite; }
+details[open] > summary ~ * { animation: cp-rise 200ms ease both; }
 
 /* Skeleton shimmer */
 @keyframes cp-shimmer {
@@ -248,43 +187,33 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 .skeleton {
   border-radius: 0.375rem;
-  background: linear-gradient(90deg, #efe8d8 25%, #e4dccb 50%, #efe8d8 75%);
+  background: linear-gradient(90deg, #eef0ec 25%, #e5e8ee 50%, #eef0ec 75%);
   background-size: 800px 100%;
   animation: cp-shimmer 1.4s ease-in-out infinite;
 }
-/* Page masthead: warm sand panel, big display title, sun/coral discs */
-.cp-masthead {
-  position: relative;
-  overflow: hidden;
-  background: #f1e4c4;
-  border: 1px solid #e4d3a8;
-  border-radius: 1.25rem;
-  color: #231f1b;
-  padding: 1.5rem;
-}
-@media (min-width: 640px) { .cp-masthead { padding: 2rem 2.25rem; } }
-.cp-masthead > * { position: relative; z-index: 1; }
-.cp-masthead::before, .cp-masthead::after {
-  content: '';
-  position: absolute;
-  border-radius: 9999px;
-  pointer-events: none;
-}
-.cp-masthead::before { right: -2.5rem; top: -3.5rem; width: 11rem; height: 11rem; background: #f4b942; opacity: 0.6; }
-.cp-masthead::after { right: 6.5rem; bottom: -2rem; width: 4.5rem; height: 4.5rem; background: #e8553d; opacity: 0.35; }
+/* Page header: a plain title block */
 .cp-masthead h1 {
-  font-family: var(--font-head);
-  color: #231f1b;
-  font-weight: 700;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #0b0f1a;
 }
-.cp-masthead p { color: #4a4239; }
+.cp-masthead p { color: #55606e; }
+
+/* Signed-in shell: fixed sidebar on large screens */
+@media (min-width: 1024px) {
+  body:has(.cp-sidebar) { padding-left: 15rem; }
+}
+body:has(.cp-sidebar) .cp-site-footer { display: none; }
 
 /* Accessibility: visible keyboard focus everywhere, skip link */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
 :focus-visible {
-  outline: 2px solid #14594a;
+  outline: 2px solid #0f3d32;
   outline-offset: 2px;
 }
 .cp-input:focus-visible { outline: none; }
@@ -294,7 +223,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   top: -4rem;
   z-index: 60;
   border-radius: 0.5rem;
-  background: #231f1b;
+  background: #0b0f1a;
   padding: 0.625rem 1rem;
   color: #fff;
   font-size: 0.875rem;
@@ -307,6 +236,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
@@ -317,26 +247,15 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 .font-head { font-family: var(--font-head); letter-spacing: -0.03em; }
 
-/* Page-to-page transition (app/template.tsx re-mounts on every navigation) */
-.cp-page-enter { animation: cp-fade-up 280ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.font-editorial { font-family: var(--font-editorial); letter-spacing: -0.015em; }
 
-/* Decorative hero discs settle in once, then rest */
-@keyframes cp-pop {
-  from { opacity: 0; transform: scale(0.6); }
-  to   { opacity: var(--cp-disc-opacity, 0.4); transform: scale(1); }
+/* Brand graphic language: soft ruled curves */
+.cp-lines {
+  background-image: repeating-radial-gradient(circle at 110% 120%, transparent 0 22px, rgba(216, 242, 167, 0.14) 22px 23px);
 }
-.cp-disc { animation: cp-pop 700ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* Numbered step chip with a connector to the next step (desktop) */
-.cp-step-chip {
-  display: inline-flex;
-  height: 2.5rem;
-  width: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  background: #14594a;
-  color: #fffdf8;
-  font-family: var(--font-head);
-  font-weight: 700;
-}
+/* One ruled band for key figures */
+.cp-stats { gap: 1px; overflow: hidden; border: 1px solid #e5e8ee; border-radius: 0.75rem; background: #e5e8ee; }
+.cp-stats > * { border: 0; border-radius: 0; background: #ffffff; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }

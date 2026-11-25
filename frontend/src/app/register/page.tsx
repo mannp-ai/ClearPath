@@ -3,8 +3,10 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, User, AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { getApiErrorMessage, register, getGoogleLoginUrl } from '@/lib/api';
+import { safeRedirect } from '@/lib/safe-redirect';
+import { useSkipIfSignedIn } from '@/lib/use-skip-if-signed-in';
 
 function RegisterForm() {
   const [name, setName] = useState('');
@@ -17,10 +19,8 @@ function RegisterForm() {
   const searchParams = useSearchParams();
 
   const rawRedirect = searchParams.get('redirect');
-  const safeRedirect =
-    rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
-      ? rawRedirect
-      : '/loans';
+  const destination = safeRedirect(rawRedirect);
+  useSkipIfSignedIn(destination);
 
   const oauthError = searchParams.get('error');
   const oauthErrorMessage = (() => {
@@ -55,22 +55,19 @@ function RegisterForm() {
   };
 
   const handleGoogleSignIn = () => {
-    window.location.href = getGoogleLoginUrl(safeRedirect);
+    window.location.href = getGoogleLoginUrl(destination);
   };
 
-  const loginUrl = rawRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : '/login';
+  const loginUrl = rawRedirect ? `/login?redirect=${encodeURIComponent(destination)}` : '/login';
 
   return (
-    <div className="w-full max-w-md animate-fade-up">
+    <div className="w-full max-w-md">
       <div className="cp-card p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-1">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#14594a] text-white shadow-xs mb-3">
-            <User className="h-5 w-5" />
-          </div>
-          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
+          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#0b0f1a]">
             Create ClearPath Account
           </h1>
-          <p className="text-xs sm:text-sm text-[#62594e]">
+          <p className="text-xs sm:text-sm text-[#55606e]">
             Save loan portfolios, custom repayment models, and scenario snapshots.
           </p>
         </div>
@@ -78,7 +75,7 @@ function RegisterForm() {
         {oauthErrorMessage && (
           <div
             role="status"
-            className="animate-fade-in flex items-start gap-2.5 rounded-lg border border-[#fed7aa] bg-[#fff7ed] p-3.5 text-xs text-[#9a3412]"
+            className=" flex items-start gap-2.5 rounded-lg border border-[#fed7aa] bg-[#fff7ed] p-3.5 text-xs text-[#9a3412]"
           >
             <Info className="h-4 w-4 shrink-0 text-[#ea580c] mt-0.5" />
             <span>{oauthErrorMessage}</span>
@@ -88,7 +85,7 @@ function RegisterForm() {
         {error && (
           <div
             role="alert"
-            className="animate-fade-in flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#b91c1c]"
+            className=" flex items-start gap-2.5 rounded-lg border border-[#fecaca] bg-[#fef2f2] p-3.5 text-xs text-[#b91c1c]"
           >
             <AlertCircle className="h-4 w-4 shrink-0 text-[#b91c1c] mt-0.5" />
             <span>{error}</span>
@@ -98,7 +95,7 @@ function RegisterForm() {
         {message ? (
           <div
             role="status"
-            className="animate-fade-in rounded-lg border border-[#a7f3d0] bg-[#ecfdf5] p-5 text-center space-y-3"
+            className=" rounded-lg border border-[#a7f3d0] bg-[#ecfdf5] p-5 text-center space-y-3"
           >
             <CheckCircle2 className="h-8 w-8 text-[#15803d] mx-auto" />
             <div className="text-sm font-semibold text-[#15803d]">
@@ -123,7 +120,7 @@ function RegisterForm() {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                className="interactive-tap w-full flex items-center justify-center gap-3 rounded-lg border border-[#e4dccb] bg-[#fffdf8] px-4 py-2.5 text-sm font-medium text-[#231f1b] shadow-xs hover:bg-[#f6f1e7] hover:border-[#d6ccb8] transition-all"
+                className=" w-full flex items-center justify-center gap-3 rounded-lg border border-[#e5e8ee] bg-[#ffffff] px-4 py-2.5 text-sm font-medium text-[#0b0f1a] hover:bg-[#f3efe7] hover:border-[#cfd4dc] transition-all"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -148,20 +145,20 @@ function RegisterForm() {
             </div>
 
             <div className="relative flex items-center justify-center">
-              <div className="border-t border-[#e4dccb] w-full" />
-              <span className="bg-[#fffdf8] px-3 text-xs text-[#62594e] absolute">or register with email</span>
+              <div className="border-t border-[#e5e8ee] w-full" />
+              <span className="bg-[#ffffff] px-3 text-xs text-[#55606e] absolute">or register with email</span>
             </div>
 
             <form onSubmit={submit} className="space-y-4">
               <div>
                 <label
                   htmlFor="name-input"
-                  className="block text-xs font-medium text-[#4a4239] mb-1.5"
+                  className="block text-xs font-medium text-[#2b3140] mb-1.5"
                 >
                   Full name (optional)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#55606e]">
                     <User className="h-4 w-4" />
                   </span>
                   <input
@@ -179,12 +176,12 @@ function RegisterForm() {
               <div>
                 <label
                   htmlFor="register-email"
-                  className="block text-xs font-medium text-[#4a4239] mb-1.5"
+                  className="block text-xs font-medium text-[#2b3140] mb-1.5"
                 >
                   Email address
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#55606e]">
                     <Mail className="h-4 w-4" />
                   </span>
                   <input
@@ -203,12 +200,12 @@ function RegisterForm() {
               <div>
                 <label
                   htmlFor="register-password"
-                  className="block text-xs font-medium text-[#4a4239] mb-1.5"
+                  className="block text-xs font-medium text-[#2b3140] mb-1.5"
                 >
                   Password (at least 8 characters)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#55606e]">
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
@@ -219,14 +216,13 @@ function RegisterForm() {
                     minLength={8}
                     maxLength={128}
                     required
-                    placeholder="••••••••"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="interactive-tap absolute right-1 top-1/2 -translate-y-1/2 text-[#62594e] hover:text-[#3d3630] p-2 rounded"
+                    className=" absolute right-1 top-1/2 -translate-y-1/2 text-[#55606e] hover:text-[#2b3140] p-2 rounded"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -247,7 +243,6 @@ function RegisterForm() {
                 ) : (
                   <>
                     <span>Create Free Account</span>
-                    <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </button>
@@ -255,11 +250,11 @@ function RegisterForm() {
           </>
         )}
 
-        <div className="pt-4 border-t border-[#efe8d8] text-center text-xs text-[#62594e]">
+        <div className="pt-4 border-t border-[#eef0ec] text-center text-xs text-[#55606e]">
           Already have an account?{' '}
           <Link
             href={loginUrl}
-            className="font-semibold text-[#14594a] hover:underline"
+            className="font-semibold text-[#0f3d32] hover:underline"
           >
             Sign in
           </Link>
@@ -272,7 +267,7 @@ function RegisterForm() {
 export default function RegisterPage() {
   return (
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
-      <Suspense fallback={<div className="cp-card p-8 text-center text-sm text-[#62594e]">Loading registration…</div>}>
+      <Suspense fallback={<div className="cp-card p-8 text-center text-sm text-[#55606e]">Loading registration…</div>}>
         <RegisterForm />
       </Suspense>
     </main>

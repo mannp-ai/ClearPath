@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { KeyRound, Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { getApiErrorMessage, requestPasswordReset, resetPassword } from '@/lib/api';
 
 function ResetPasswordForm() {
@@ -37,13 +37,10 @@ function ResetPasswordForm() {
     <div className="w-full max-w-md">
       <div className="cp-card p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-1">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#f4b942] text-[#231f1b] shadow-xs mb-3">
-            <KeyRound className="h-5 w-5" />
-          </div>
-          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#231f1b]">
+          <h1 className="font-head text-3xl font-semibold tracking-tight text-[#0b0f1a]">
             {token ? 'Set New Password' : 'Reset Password'}
           </h1>
-          <p className="text-xs sm:text-sm text-[#62594e]">
+          <p className="text-xs sm:text-sm text-[#55606e]">
             {token
               ? 'Enter a new password for your ClearPath account.'
               : "Enter your registered email address and we'll send a password recovery link."}
@@ -84,12 +81,12 @@ function ResetPasswordForm() {
               <div>
                 <label
                   htmlFor="new-password"
-                  className="block text-xs font-semibold uppercase tracking-wider text-[#62594e] mb-1.5"
+                  className="block text-xs font-semiboldr text-[#55606e] mb-1.5"
                 >
                   New password (at least 8 characters)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#55606e]">
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
@@ -100,14 +97,13 @@ function ResetPasswordForm() {
                     minLength={8}
                     maxLength={128}
                     required
-                    placeholder="••••••••"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-[#62594e] hover:text-[#3d3630]"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-[#55606e] hover:text-[#2b3140]"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -118,12 +114,12 @@ function ResetPasswordForm() {
               <div>
                 <label
                   htmlFor="reset-email"
-                  className="block text-xs font-semibold uppercase tracking-wider text-[#62594e] mb-1.5"
+                  className="block text-xs font-semiboldr text-[#55606e] mb-1.5"
                 >
                   Email address
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#62594e]">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#55606e]">
                     <Mail className="h-4 w-4" />
                   </span>
                   <input
@@ -150,17 +146,16 @@ function ResetPasswordForm() {
               ) : (
                 <>
                   <span>{token ? 'Update Password' : 'Send Recovery Link'}</span>
-                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
           </form>
         )}
 
-        <div className="pt-4 border-t border-[#efe8d8] text-center">
+        <div className="pt-4 border-t border-[#eef0ec] text-center">
           <Link
             href="/login"
-            className="inline-flex items-center gap-1 py-2 text-sm text-[#62594e] hover:text-[#231f1b]"
+            className="inline-flex items-center gap-1 py-2 text-sm text-[#55606e] hover:text-[#0b0f1a]"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span>Back to login</span>
@@ -176,7 +171,7 @@ export default function ResetPasswordPage() {
     <main className="flex-1 flex items-center justify-center px-4 py-12 sm:py-16">
       <Suspense
         fallback={
-          <div className="cp-card p-8 text-center text-sm text-[#62594e]">
+          <div className="cp-card p-8 text-center text-sm text-[#55606e]">
             Loading password reset…
           </div>
         }

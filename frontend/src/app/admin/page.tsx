@@ -11,7 +11,7 @@ import {
   type AdminUser,
   type SessionUser,
 } from '@/lib/api';
-import { ShieldCheck, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -81,14 +81,10 @@ export default function AdminPage() {
       {/* Page Header */}
       <div className="cp-masthead flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#bcd8c9] bg-[#e6f0e9] px-2.5 py-0.5 text-xs font-semibold text-[#0f4a3d] mb-2">
-            <ShieldCheck className="h-3 w-3" />
-            <span>Internal Administration</span>
-          </div>
           <h1 className="font-head">
-            User Account Management
+            User accounts
           </h1>
-          <p className="mt-1 text-sm text-[#62594e]">
+          <p className="mt-1 text-sm text-[#55606e]">
             Review registered accounts, role entitlements, and operational status.
           </p>
         </div>
@@ -108,12 +104,12 @@ export default function AdminPage() {
       )}
 
       {loading ? (
-        <div className="cp-card p-12 text-center text-sm text-[#62594e]">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#0f4a3d] border-t-transparent mb-3" />
+        <div className="cp-card p-12 text-center text-sm text-[#55606e]">
+          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-[#0a2e25] border-t-transparent mb-3" />
           <p>Loading user directories…</p>
         </div>
       ) : users.length === 0 ? (
-        <div className="cp-card p-10 text-center text-sm text-[#62594e]">
+        <div className="cp-card p-10 text-center text-sm text-[#55606e]">
           No user accounts found.
         </div>
       ) : (
@@ -122,19 +118,19 @@ export default function AdminPage() {
             <table className="w-full text-left text-xs sm:text-sm">
               <caption className="sr-only">User accounts and roles</caption>
               <thead>
-                <tr className="border-b border-[#e4dccb] bg-[#f6f1e7] text-xs font-semibold text-[#62594e] uppercase tracking-wider">
+                <tr className="border-b border-[#e5e8ee] bg-[#f3efe7] text-xs font-semibold text-[#55606e]r">
                   <th scope="col" className="py-3.5 px-4 sm:px-6">User Account</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6">Role Entitlement</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6">Account Status</th>
                   <th scope="col" className="py-3.5 px-4 sm:px-6 text-right">Access Controls</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#efe8d8]">
+              <tbody className="divide-y divide-[#eef0ec]">
                 {users.map((user) => {
                   const canManageAccount =
                     currentUser?.role === 'SUPER_ADMIN' || user.role === 'USER';
                   return (
-                    <tr key={user._id} className="hover:bg-[#f6f1e7] transition-colors">
+                    <tr key={user._id} className="hover:bg-[#f3efe7] transition-colors">
                       <td className="py-3.5 px-4 sm:px-6 font-medium text-[#172033]">
                         {user.email}
                       </td>
@@ -157,10 +153,10 @@ export default function AdminPage() {
                           <span
                             className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                               user.role === 'SUPER_ADMIN'
-                                ? 'bg-[#e6f0e9] text-[#0f4a3d]'
+                                ? 'bg-[#eef8dc] text-[#0a2e25]'
                                 : user.role === 'ADMIN'
-                                ? 'bg-[#f6eaf2] text-[#7a3b69]'
-                                : 'bg-[#efe8d8] text-[#62594e]'
+                                ? 'bg-[#eaf1fa] text-[#2563a8]'
+                                : 'bg-[#eef0ec] text-[#55606e]'
                             }`}
                           >
                             {user.role}
@@ -202,7 +198,7 @@ export default function AdminPage() {
                               : 'Activate'}
                           </button>
                         ) : (
-                          <span className="text-xs text-[#62594e]">Protected</span>
+                          <span className="text-xs text-[#55606e]">Protected</span>
                         )}
                       </td>
                     </tr>

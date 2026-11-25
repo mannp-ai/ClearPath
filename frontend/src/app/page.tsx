@@ -1,224 +1,108 @@
 import Link from 'next/link';
-import { ArrowRight, Bookmark, Percent, Scale, ShieldCheck, Wallet } from 'lucide-react';
+import { PayoffDemo } from '@/components/payoff-demo';
+import { ProductTabs } from '@/components/product-tabs';
+
+const wrap = 'mx-auto w-full max-w-6xl px-4 sm:px-6';
+const primary = 'inline-flex min-h-12 items-center justify-center rounded-lg bg-[#d8f2a7] px-6 font-semibold text-[#0b0f1a] hover:bg-[#e8f9c8]';
+
+const STEPS = [
+  ['Find your loan details', 'Each balance, interest rate and minimum payment, from your statement or servicer account.'],
+  ['Type them in', 'Create a free account. No bank login and no credit check.'],
+  ['Compare and decide', 'Try extra amounts, check a refinance rate and save the plan you like.'],
+];
+
+const LOST = ['Income-driven repayment', 'Public Service Loan Forgiveness', 'Federal deferment and forbearance', 'Disability and death discharge'];
+
+const QUESTIONS = [
+  ['Who is ClearPath for?', 'People repaying student loans, mainly in the United States, who want to see what their choices could cost before making them.'],
+  ['What does ClearPath not do?', 'It does not lend money, arrange refinancing, take or move payments, or connect to your bank or loan servicer.'],
+  ['Does it cost anything?', 'Creating an account and using the calculators is free today.'],
+  ['What do I need to start?', 'The balance, interest rate and minimum monthly payment for each loan. No account numbers or Social Security number.'],
+  ['Does it cover federal repayment plans?', 'Not yet. It does not model income-driven plans such as the Repayment Assistance Plan, or loan forgiveness. Check StudentAid.gov for those.'],
+  ['Are the results guaranteed?', 'No. They are estimates from the figures you enter. Your loan servicer decides your actual terms.'],
+];
 
 export default function Home() {
   return (
-    <main className="flex-1 bg-[#f6f1e7]">
-      {/* 1. Hero Section */}
-      <section className="relative overflow-hidden border-b border-[#e4dccb] bg-[#f6f1e7] pt-16 pb-20 sm:pt-24 sm:pb-28">
-        <div aria-hidden="true" className="cp-disc pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-[#f4b942]" style={{ ["--cp-disc-opacity" as string]: 0.4 }} />
-        <div aria-hidden="true" className="cp-disc pointer-events-none absolute -left-16 bottom-8 h-32 w-32 rounded-full bg-[#e8553d] animation-delay-150" style={{ ["--cp-disc-opacity" as string]: 0.2 }} />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-6 animate-fade-up">
-              <p className="text-base font-semibold text-[#14594a]">
-                Student loan decision support
-              </p>
-              <h1 className="font-head text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-[-0.04em] text-[#231f1b]">
-                Take control of your <span className="box-decoration-clone rounded-xl bg-[#f4b942] px-2">student loans.</span>
-              </h1>
-              <p className="text-lg text-[#4a4239] leading-relaxed max-w-xl">
-                Understand your debt, compare repayment strategies, and explore refinancing scenarios, all in one place.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Link href="/register" className="cp-btn-primary px-6">
-                  <span>Start managing loans</span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <a href="#features" className="cp-btn-secondary px-6">
-                  Explore features
-                </a>
-              </div>
+    <main>
+      <section className="cp-lines overflow-hidden bg-[#0f3d32] text-white">
+        <div className={`${wrap} grid items-center gap-12 py-12 lg:grid-cols-[1fr_1.05fr] lg:py-16`}>
+          <div className="cp-rise">
+            <h1 className="font-editorial text-[2.5rem] leading-[1.06] sm:text-5xl lg:text-[3.5rem]">Know when your student loans will be paid off.</h1>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-[#d5ded9]">
+              ClearPath is a free planning tool. Type in your loans to see your debt-free date, the interest you will pay, and how paying a little extra changes both.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/register" className={primary}>Check my loans</Link>
+              <a href="#example" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/25 px-6 font-medium text-white hover:bg-white/10 lg:hidden">
+                Try the example
+              </a>
             </div>
+            <p className="mt-6 text-sm text-[#a9bdb4]">Not a lender. No bank linking. No credit check.</p>
+          </div>
+          <PayoffDemo />
+        </div>
+      </section>
 
-            {/* What the tools produce: descriptive only, no sample figures */}
-            <div className="lg:col-span-5 animate-fade-up animation-delay-150">
-              <div className="rounded-2xl bg-[#12332b] p-6 sm:p-8 space-y-5 shadow-[8px_8px_0_0_#f4b942]">
-                <h2 className="text-sm font-semibold uppercase tracking-widest text-[#f4b942]">Your results show</h2>
-                <ul className="space-y-4 text-base text-[#e4dccb]">
-                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Months to debt-free under minimum payments, Avalanche and Snowball</span></li>
-                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Total interest paid, and what extra payments save</span></li>
-                  <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#f4b942]" aria-hidden="true" /><span>Refinancing cost versus keeping your current loans, with federal-protection warnings</span></li>
-                </ul>
-                <p className="text-sm text-[#d6ccb8] border-t border-[#2d5a4e] pt-4">
-                  Calculated from the loans you enter. No bank linking, no credit check, no lender commissions.
-                </p>
-              </div>
-            </div>
+      <section id="features" className="scroll-mt-16 py-16 lg:py-20">
+        <div className={wrap}>
+          <h2 className="font-editorial mb-8 text-3xl sm:text-4xl">Three questions it answers</h2>
+          <ProductTabs />
+        </div>
+      </section>
+
+      <section id="how-it-works" className="scroll-mt-16 border-y border-[#e5e8ee] bg-white py-12">
+        <div className={wrap}>
+          <h2 className="font-editorial text-3xl">How you use it</h2>
+          <ol className="mt-8 grid gap-8 md:grid-cols-3">
+            {STEPS.map(([title, body], i) => (
+              <li key={title} className="flex gap-4">
+                <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#d8f2a7] font-semibold tabular-nums text-[#0b0f1a]">{i + 1}</span>
+                <div>
+                  <h3 className="text-lg font-semibold">{title}</h3>
+                  <p className="mt-1 text-[#4a5361]">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="bg-[#f3efe7] py-16 lg:py-20">
+        <div className={`${wrap} grid gap-10 lg:grid-cols-2 lg:items-center`}>
+          <div>
+            <h2 className="font-editorial text-3xl sm:text-4xl">Before you refinance federal loans</h2>
+            <p className="mt-4 max-w-md text-lg text-[#4a5361]">
+              A lower rate can look like an easy win. Moving federal loans to a private lender gives up these protections for good, and ClearPath says so before it shows any saving.
+            </p>
+          </div>
+          <ul className="grid gap-px overflow-hidden rounded-2xl bg-[#e3ddd0] sm:grid-cols-2">
+            {LOST.map((item) => (
+              <li key={item} className="bg-white p-5 text-lg font-semibold">{item}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section id="questions" className="scroll-mt-16 py-16 lg:py-20">
+        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+          <h2 className="font-editorial text-3xl sm:text-4xl">Questions</h2>
+          <div className="mt-6 divide-y divide-[#e5e8ee] border-y border-[#e5e8ee]">
+            {QUESTIONS.map(([question, answer]) => (
+              <details key={question}>
+                <summary className="flex min-h-14 cursor-pointer items-center py-3 text-lg font-semibold">{question}</summary>
+                <p className="pb-5 text-[#4a5361]">{answer}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 2. Features Section (High-Density Analytical Showcase) */}
-      <section id="features" className="py-20 bg-[#f6f1e7] border-b border-[#e4dccb]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="max-w-2xl mb-12">
-            <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
-              Built for precision, not sales pitches.
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-[#62594e]">
-              Every tool in ClearPath solves a real friction point in student loan management.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Feature 1 */}
-            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#e6f0e9', color: '#14594a' }}>
-                <Wallet className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Feature 01</span>
-              </span>
-              <h3 className="font-display text-lg font-bold text-[#231f1b]">
-                Multi-Loan Portfolio Consolidation
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Organise loan balances, interest rates, and minimum payments in one place. Categorise accounts as Federal or Private to monitor loan protections and balance-weighted interest exposure.
-              </p>
-              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
-                <span>Combined monthly minimum</span>
-                <span className="font-medium text-[#231f1b]">True weighted portfolio APR</span>
-              </div>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#fbe7b8', color: '#7a5200' }}>
-                <Scale className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Feature 02</span>
-              </span>
-              <h3 className="font-display text-lg font-bold text-[#231f1b]">
-                Avalanche vs. Snowball Comparison
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Compare minimum payments, Debt Avalanche (highest APR first), and Debt Snowball (smallest balance first). Exact month-by-month principal reduction and rollover cascading show your debt-free date.
-              </p>
-              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
-                <span>Month-by-month schedules</span>
-                <span className="font-medium text-[#231f1b]">Debt-free month projections</span>
-              </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#fbd9d2', color: '#a3321f' }}>
-                <Percent className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Feature 03</span>
-              </span>
-              <h3 className="font-display text-lg font-bold text-[#231f1b]">
-                Hypothetical Refinancing Evaluator
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Estimate hypothetical refinancing payments, interest, and total repayment costs. Detect the &ldquo;lower payment trap&rdquo; where extended terms lower monthly cash outflow but dramatically increase total interest.
-              </p>
-              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
-                <span>Closing fee treatment</span>
-                <span className="font-medium text-[#231f1b]">Federal relief warnings</span>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="cp-card cp-card-lift p-6 sm:p-7 space-y-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: '#e6f0e9', color: '#14594a' }}>
-                <Bookmark className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Feature 04</span>
-              </span>
-              <h3 className="font-display text-lg font-bold text-[#231f1b]">
-                Saved Scenarios & Modeling Archives
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Save customized repayment and refinancing scenarios to your account. Reload past simulations anytime to review assumptions, budget changes, or extra payment milestones without re-entering data.
-              </p>
-              <div className="pt-3 border-t border-[#efe8d8] text-xs text-[#62594e] flex justify-between">
-                <span>Single-click scenario restore</span>
-                <span className="font-medium text-[#231f1b]">Account-isolated models</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. How ClearPath Works */}
-      <section id="how-it-works" className="py-20 bg-[#fffdf8] border-b border-[#e4dccb]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="max-w-2xl mb-14">
-            <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#231f1b]">
-              How ClearPath works.
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-[#62594e]">
-              Get started in three simple steps without linking bank accounts or running credit checks.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-3">
-              <div className="cp-step-chip" aria-label="Step 1">1</div>
-              <h3 className="font-display text-base font-bold text-[#231f1b]">
-                Create your account
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Set up a secure login with your email address. Your loan portfolio and simulation data are encrypted and kept private.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="cp-step-chip" aria-label="Step 2">2</div>
-              <h3 className="font-display text-base font-bold text-[#231f1b]">
-                Enter your student loans
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Add balances, APRs, and minimum payments for each loan account. We compute your combined baseline and weighted APR.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="cp-step-chip" aria-label="Step 3">3</div>
-              <h3 className="font-display text-base font-bold text-[#231f1b]">
-                Compare strategies & explore refinancing
-              </h3>
-              <p className="text-sm text-[#4a4239] leading-relaxed">
-                Test extra monthly payments to see your exact payoff acceleration and evaluate whether refinancing quotes save money.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Disclaimers & Trust Notice */}
-      <section className="py-14 bg-[#f6f1e7] border-b border-[#e4dccb]">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="rounded-lg border border-[#d6ccb8] bg-[#fffdf8] p-6 space-y-3 text-xs leading-relaxed text-[#62594e]">
-            <div className="flex items-center gap-2 font-display font-semibold text-[#231f1b] text-sm">
-              <ShieldCheck className="h-4 w-4 text-[#14594a]" />
-              <span>Independent Decision-Support & Educational Planning Notice</span>
-            </div>
-            <p>
-              ClearPath is an educational mathematical calculator designed to help borrowers evaluate debt repayment strategies. ClearPath is not a lender, loan broker, credit underwriter, loan servicer, or certified financial adviser.
-            </p>
-            <p>
-              All computations, timelines, and interest figures are simulations based on user-entered values. ClearPath does not guarantee savings or offer loan approvals. Refinancing federal loans with a private lender permanently forfeits federal protections, including Public Service Loan Forgiveness (PSLF), Income-Driven Repayment (IDR/SAVE), and federal forbearance.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Final Call to Action */}
-      <section className="py-20 bg-[#12332b] text-center">
-        <div className="mx-auto max-w-2xl px-4 sm:px-6 space-y-5">
-          <h2 className="font-head text-3xl sm:text-4xl font-semibold tracking-tight text-[#fffdf8]">
-            Your next step towards a clearer repayment plan.
-          </h2>
-          <p className="text-sm sm:text-base text-[#d6ccb8]">
-            Create a free account to organize your loans and start modeling accelerated payoff strategies today.
-          </p>
-          <div className="pt-2">
-            <Link
-              href="/register"
-              className="cp-btn-primary text-sm px-6 py-3 !bg-[#f4b942] !text-[#231f1b] hover:!bg-[#fffdf8]"
-            >
-              <span>Get started</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      <section className="cp-lines bg-[#0f3d32] py-16 text-center text-white">
+        <div className={wrap}>
+          <h2 className="font-editorial text-3xl sm:text-4xl">See your own debt-free date</h2>
+          <p className="mx-auto mt-3 max-w-md text-[#d5ded9]">Have your balances, rates and minimum payments ready.</p>
+          <Link href="/register" className={`${primary} mt-7`}>Check my loans</Link>
         </div>
       </section>
     </main>
