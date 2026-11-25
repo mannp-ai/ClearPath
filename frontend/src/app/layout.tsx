@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Fraunces, Inter } from "next/font/google";
 import Navigation from "./navigation";
-import { Logo } from "@/components/logo";
+import { Logo, LogoMark } from "@/components/logo";
 import { PreferencesProvider } from "@/lib/preferences";
 import "./globals.css";
 
@@ -25,18 +25,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         </PreferencesProvider>
-        <footer className="cp-site-footer bg-[#0b0f1a] py-10 text-sm text-[#c3cad5]">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
-            <div className="max-w-md space-y-2">
-              <Logo className="text-white" />
-              <p>Clarity for what&rsquo;s next.</p>
-              <p className="text-[#9aa3af]">ClearPath gives estimates from the figures you enter. It is not a lender, loan servicer or financial adviser.</p>
+        <footer className="cp-site-footer relative overflow-hidden border-t border-white/15 bg-[#0f3d32] text-[#c9d8d1]">
+          <LogoMark className="pointer-events-none absolute -bottom-16 -right-8 h-72 w-72 text-[#d8f2a7] opacity-[0.07]" />
+          <div className="relative mx-auto max-w-6xl px-4 pb-8 pt-14 sm:px-6 lg:pt-16">
+            <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+              <div>
+                <Logo className="text-white" />
+                <p className="font-editorial mt-5 text-4xl leading-tight text-[#d8f2a7] sm:text-5xl">Clarity for what&rsquo;s next.</p>
+              </div>
+              <nav aria-label="Footer">
+                <ul className="flex flex-col sm:flex-row sm:gap-2">
+                  {[
+                    ['/#features', 'What you get'],
+                    ['/#how-it-works', 'How it works'],
+                    ['/#questions', 'Questions'],
+                  ].map(([href, label]) => (
+                    <li key={href}>
+                      <Link href={href} className="inline-flex min-h-11 items-center rounded-lg font-medium text-white underline-offset-8 hover:text-[#d8f2a7] hover:underline sm:px-3">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
             </div>
-            <nav aria-label="Footer" className="flex flex-wrap gap-x-6">
-              <Link href="/#features" className="inline-flex min-h-11 items-center hover:text-white">What you get</Link>
-              <Link href="/#how-it-works" className="inline-flex min-h-11 items-center hover:text-white">How it works</Link>
-              <Link href="/#questions" className="inline-flex min-h-11 items-center hover:text-white">Questions</Link>
-            </nav>
+            <div className="mt-10 flex flex-col gap-3 border-t border-white/15 pt-6 text-sm sm:flex-row sm:justify-between sm:gap-8">
+              <p className="max-w-2xl">ClearPath gives estimates from the figures you enter. It is not a lender, loan servicer or financial adviser.</p>
+              <p className="shrink-0">&copy; 2026 ClearPath</p>
+            </div>
           </div>
         </footer>
       </body>

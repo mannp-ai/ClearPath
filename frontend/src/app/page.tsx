@@ -26,19 +26,16 @@ export default function Home() {
   return (
     <main>
       <section className="cp-lines overflow-hidden bg-[#0f3d32] text-white">
-        <div className={`${wrap} grid items-center gap-12 py-12 lg:grid-cols-[1fr_1.05fr] lg:py-16`}>
+        {/* Phones get a tighter first screen so the top of the live example is visible without scrolling. */}
+        <div className={`${wrap} grid items-center gap-8 py-8 sm:gap-12 sm:py-12 lg:grid-cols-[1fr_1.05fr] lg:py-16`}>
           <div className="cp-rise">
-            <h1 className="font-editorial text-[2.5rem] leading-[1.06] sm:text-5xl lg:text-[3.5rem]">Know when your student loans will be paid off.</h1>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-[#d5ded9]">
-              ClearPath is a free planning tool. Type in your loans to see your debt-free date, the interest you will pay, and how paying a little extra changes both.
+            <h1 className="font-editorial text-[2.125rem] leading-[1.1] sm:text-5xl sm:leading-[1.06] lg:text-[3.5rem]">Know when your student loans will be paid off.</h1>
+            <p className="mt-4 max-w-md text-lg leading-relaxed text-[#d5ded9] sm:mt-6">
+              <span className="sm:hidden">Add your loans to see your debt-free date, and what paying extra changes.</span>
+              <span className="hidden sm:inline">ClearPath is a free planning tool. Type in your loans to see your debt-free date, the interest you will pay, and how paying a little extra changes both.</span>
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className={primary}>Check my loans</Link>
-              <a href="#example" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white/25 px-6 font-medium text-white hover:bg-white/10 lg:hidden">
-                Try the example
-              </a>
-            </div>
-            <p className="mt-6 text-sm text-[#a9bdb4]">Not a lender. No bank linking. No credit check.</p>
+            <Link href="/register" className={`${primary} mt-6 w-full sm:mt-8 sm:w-auto`}>Check my loans</Link>
+            <p className="mt-3 text-sm text-[#c3d3cc] sm:mt-6">Not a lender. No bank linking. No credit check.</p>
           </div>
           <PayoffDemo />
         </div>
